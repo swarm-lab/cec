@@ -21,7 +21,7 @@ model.covariance <- function(type, cov, mean, param)
         cov * diag(ncol(cov))
     else if (type == resolve.type("eigenvalues"))
     {    
-        V <- eigen(cov)$vec
+        V <- eigen(cov, symmetric = TRUE)$vec
         D <- diag(sort(param$eigenvalues, decreasing=T))
         V %*% D %*% t(V)
     }
