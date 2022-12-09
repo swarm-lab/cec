@@ -28,6 +28,6 @@ Imports:
     stats,
     utils
 NeedsCompilation: yes
-SystemRequirements: C++11
+SystemRequirements: C++17
 License: GPL-3
 RoxygenNote: 7.2.2
