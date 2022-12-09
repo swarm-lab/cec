@@ -2,13 +2,14 @@
 #' 
 #' @description Internal function to generate a cluster of points uniformly 
 #'  distributed inside a disc.
-#' 
+#'  
+#' @noRd
 ball <- function(n = 4000, r = 1, dim = 2) { 
     M <- matrix(0, n, dim)
     count <- 0;
     rr <- r ^ 2
     while (count < n) {
-        p <- runif(dim, -r, r)
+        p <- stats::runif(dim, -r, r)
         
         if (sum(p ^ 2) <= rr) {
             count <- count + 1
@@ -25,6 +26,7 @@ ball <- function(n = 4000, r = 1, dim = 2) {
 #' @description Internal function to compute the volume of a ball in \code{n}
 #'  dimensions. 
 #' 
+#' @noRd
 nballvolume <- function(r, n)  {
     k <- as.integer(n / 2)
     
@@ -38,9 +40,27 @@ nballvolume <- function(r, n)  {
 
 #' @title Mouse
 #' 
-#' @description Internal function to generate a cluster of points uniformly 
-#'  distributed inside a Mickey mouse shape. 
+#' @description \code{mouseset} generates a cluster of points uniformly 
+#'  distributed inside a "mouse head" shape. 
+#'  
+#' @param n The number of points (default: 4000). 
 #' 
+#' @param r.head The radius of the mouse's head (default: 2). 
+#' 
+#' @param r.left.ear,r.right.ear The radii of the left and right ear of the 
+#'  mouse's head (default: 1.1). 
+#' 
+#' @param left.ear.dist,right.ear.dist The distance between the center of the 
+#'  mouse's head and the center of the left and right ear (default: 2.5).  
+#' 
+#' @param dim The dimensionality of the mouse's head (default: 2).
+#' 
+#' @return A matrix with \code{n} rows and \code{dim} columns. 
+#' 
+#' @examples
+#' plot(mouseset())
+#' 
+#' @export
 mouseset <- function(n = 4000, r.head = 2, r.left.ear = 1.1, r.right.ear = 1.1, 
                      left.ear.dist = 2.5, right.ear.dist = 2.5, dim = 2) {
     vh <- nballvolume(r.head, dim)
@@ -83,7 +103,7 @@ mouseset <- function(n = 4000, r.head = 2, r.left.ear = 1.1, r.right.ear = 1.1,
         
         for (i in s) {
             r <- rs[i]
-            random.p <- runif(dim, -r, +r)
+            random.p <- stats::runif(dim, -r, +r)
             p <- centers[i,] + random.p
             
             if (sum(random.p ^ 2) < rrs[i]) {

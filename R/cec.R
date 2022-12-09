@@ -100,7 +100,7 @@
 #' @param readline Used only in the interactive mode. If \code{readline} is
 #'  TRUE, at each iteration, before plotting it will wait for the user to press
 #'  <Return> instead of the standard 'before plotting' waiting
-#'  (\code{par(ask = TRUE)}).
+#'  (\code{graphics::par(ask = TRUE)}).
 #'
 #' @details Cross-Entropy Clustering (CEC) aims to partition \emph{m} points
 #'  into \emph{k} clusters so as to minimize the cost function (energy
@@ -157,9 +157,6 @@
 #'  \code{cost.function}, \code{nclusters}, \code{iterations}, \code{cost},
 #'  \code{covariances}, \code{covariances.model}, \code{time}.
 #'
-#' @author Simon Garnier, \email{garnier@@njit.edu}, based on original code
-#'  by Konrad Kamieniecki, Jacek Tabor, and Przemysław Spurek.
-#'
 #' @seealso \code{\link{CEC-package}}, \code{\link{plot.cec}}, 
 #'  \code{\link{print.cec}}
 #'
@@ -178,8 +175,8 @@
 #' m3[,2] <- m3[, 2] - 5
 #' m <- rbind(m1, m2, m3)
 #'
-#' oldpar <- par(ask = TRUE)
-#' on.exit(par(oldpar))
+#' oldpar <- graphics::par(ask = TRUE)
+#' on.exit(graphics::par(oldpar))
 #' plot(m, cex = 0.5, pch = 19)
 #'
 #' ## Clustering result:
@@ -239,10 +236,10 @@ cec <- function(x,
                 readline = TRUE) {
 
     ### CHECK ARGUMENTS
-    if (!hasArg(x))
+    if (!methods::hasArg(x))
         stop("Missing required argument: 'x'.")
 
-    if (!hasArg(centers)) {
+    if (!methods::hasArg(centers)) {
         centers <- 1
         split <- TRUE
     }
@@ -259,10 +256,10 @@ cec <- function(x,
     if (nrow(x) < 1)
         stop("Illegal argument: 'x' must have at least 1 row.")
 
-    if (!all(complete.cases(x)))
+    if (!all(stats::complete.cases(x)))
         stop("Illegal argument: 'x' should not contain NA values.")
 
-    if (!all(complete.cases(centers)))
+    if (!all(stats::complete.cases(centers)))
         stop("Illegal argument: 'centers' should not contain NA values.")
 
     var.centers <- NULL
@@ -303,13 +300,13 @@ cec <- function(x,
 
     if (centers.initialized) {
         init.method.name <- "none"
-    } else if (hasArg(centers.init)) {
+    } else if (methods::hasArg(centers.init)) {
         init.method.name <- switch(match.arg(centers.init), `kmeans++` = "kmeanspp", random = "random")
     } else {
         init.method.name <- "kmeanspp"
     }
 
-    if (!hasArg(type)) {
+    if (!methods::hasArg(type)) {
         type <- "all"
     }
 
@@ -442,6 +439,7 @@ cec <- function(x,
 #'
 #' @description Internal function to run \code{\link{cec}} interactively.
 #'  
+#' @noRd
 cec.interactive <- function(x, 
                             centers, 
                             type = c("covariance", "fixedr", "spherical",
@@ -453,8 +451,8 @@ cec.interactive <- function(x,
                             card.min = "5%", 
                             keep.removed = FALSE, 
                             readline = TRUE) {
-    old.ask <- par()["ask"]
-    on.exit(par(old.ask))
+    old.ask <- graphics::par()["ask"]
+    on.exit(graphics::par(old.ask))
     
     n <- ncol(x)
     
@@ -470,9 +468,9 @@ cec.interactive <- function(x,
     
     if (readline) {
         ignore <- readline(prompt = "After each iteration you may:\n - press <Enter> for next iteration \n - write number <n> (may be negative one) and press <Enter> for next <n> iterations \n - write 'q' and abort execution.\n Press <Return>.\n")
-        par(ask = FALSE)
+        graphics::par(ask = FALSE)
     } else {
-        par(ask = TRUE)
+        graphics::par(ask = TRUE)
     }
     
     while (TRUE) {

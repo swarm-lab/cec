@@ -3,6 +3,7 @@
 #' @description Internal function to map clustering types provided as character
 #'  strings to integer. 
 #' 
+#' @noRd
 resolve.type <- function(type) {
     types <- c("covariance", "fixedr", "spherical", "diagonal", "eigenvalues", 
                "mean", "all")
@@ -15,19 +16,20 @@ resolve.type <- function(type) {
 #' @description Internal function to prepare the clustering parameters for the 
 #'  C function. 
 #' 
+#' @noRd
 create.cec.params.for.models <- function(k, n, type.arg, param.arg) {
     models <- replicate(k, list())
     types <- vapply(type.arg, resolve.type, "")
     params <- NULL
     
-    if (hasArg(param.arg)) {
+    if (methods::hasArg(param.arg)) {
         params <- param.arg
     }
     
     if (length(types) == 1) {
         types <- rep(types, k)
         
-        if (hasArg(param.arg)) {
+        if (methods::hasArg(param.arg)) {
             params <- rep(list(unlist(param.arg)), k)
             params <- params[!params %in% list(NULL, NA)]
         }
@@ -135,6 +137,7 @@ create.cec.params.for.models <- function(k, n, type.arg, param.arg) {
 #' @description Internal function to handle Cholesky decomposition potential 
 #'  erroring. 
 #' 
+#' @noRd
 try.chol <- function(mat) {
     ifelse("try-error" %in% class(try(chol(mat), silent = TRUE)), FALSE, TRUE)
 }

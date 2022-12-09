@@ -5,10 +5,10 @@ Version: 0.11.0
 Date: 2022-12-15
 Authors@R: c(
     person("Kamieniecki", "Konrad", email = "konrad.kamieniecki@alumni.uj.edu.pl", 
-      role = c("aut", "cre")),
+      role = c("aut")),
     person("Spurek", "Przemyslaw", email = "przemyslaw.spurek@gmail.com", 
       role = c("ctb")),
-      person("Simon", "Garnier", email = "garnier@njit.edu", role = c("aut", "ctb"),
+      person("Simon", "Garnier", email = "garnier@njit.edu", role = c("cre", "ctb"),
       comment = c(ORCID = "0000-0002-3886-3974"))
   )
 Maintainer: Simon Garnier <garnier@njit.edu>
@@ -18,7 +18,8 @@ Description: Clustering that splits data into Gaussian type clusters. The
     discover new groups. Based on Spurek, P. and Tabor, J. (2014) 
     <doi:10.1016/j.patcog.2014.03.006>.
 ByteCompile: true
-URL: https://github.com/swarm-lab/cec
+URL: https://github.com/swarm-lab/cec,
+    https://swarm-lab.github.io/cec/
 Encoding: UTF-8
 LazyData: true
 Imports: 

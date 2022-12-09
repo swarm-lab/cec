@@ -3,8 +3,9 @@
 #' @description Internal function to compute points on an ellipse's perimeter 
 #'  for a given mean vector and covariance matrix.
 #' 
+#' @noRd
 ellipse <- function(mean, cov, npoints = 250) {
-    E <- eigen((cov))    
+    E <- eigen(cov, symmetric = TRUE)
     eve <- E$vec
     eva <- E$val
     r <- seq(-pi, pi, len = npoints)

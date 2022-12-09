@@ -121,7 +121,7 @@ starting the splitting process.}
 \item{readline}{Used only in the interactive mode. If \code{readline} is
 TRUE, at each iteration, before plotting it will wait for the user to press
 <Return> instead of the standard 'before plotting' waiting
-(\code{par(ask = TRUE)}).}
+(\code{graphics::par(ask = TRUE)}).}
 }
 \value{
 An object of class \code{cec} with the following attributes:
@@ -194,8 +194,8 @@ m3 <- matrix(rnorm(2000, mean = 3, sd = 1), ncol = 2)
 m3[,2] <- m3[, 2] - 5
 m <- rbind(m1, m2, m3)
 
-oldpar <- par(ask = TRUE)
-on.exit(par(oldpar))
+oldpar <- graphics::par(ask = TRUE)
+on.exit(graphics::par(oldpar))
 plot(m, cex = 0.5, pch = 19)
 
 ## Clustering result:
@@ -242,10 +242,6 @@ Spurek, P. and Tabor, J. (2014) Cross-Entropy Clustering
 \seealso{
 \code{\link{CEC-package}}, \code{\link{plot.cec}}, 
  \code{\link{print.cec}}
-}
-\author{
-Simon Garnier, \email{garnier@njit.edu}, based on original code
- by Konrad Kamieniecki, Jacek Tabor, and Przemysław Spurek.
 }
 \keyword{cluster}
 \keyword{models}

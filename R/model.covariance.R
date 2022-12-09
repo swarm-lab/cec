@@ -3,6 +3,7 @@
 #' @description Internal function to extract the model mean from the output of 
 #'  the Cross-Entropy Clustering algorithm.
 #' 
+#' @noRd
 model.mean <- function(type, center, param) {
     if (length(which(is.na(center))) > 0) {
         matrix(NA, 1, ncol(center))
@@ -19,6 +20,7 @@ model.mean <- function(type, center, param) {
 #' @description Internal function to extract the model covariance matrix from 
 #'  the output of the Cross-Entropy Clustering algorithm.
 #' 
+#' @noRd
 model.covariance <- function(type, cov, mean, param) {
     if (length(which(is.na(cov))) > 0) {
         matrix(NA, nrow(cov), ncol(cov))

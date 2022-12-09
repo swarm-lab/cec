@@ -58,7 +58,7 @@ plot.cec <- function(x, col, cex = 0.5, pch = 19, cex.centers = 1,
         stop("Plotting is available only for 2-dimensional data.")
     }
     
-    if (!hasArg(col)) {
+    if (!methods::hasArg(col)) {
         col <- x$cluster
     }
     
@@ -70,11 +70,11 @@ plot.cec <- function(x, col, cex = 0.5, pch = 19, cex.centers = 1,
         yl <- "y"
     }
     
-    if (hasArg(xlab)) {
+    if (methods::hasArg(xlab)) {
         xl <- xlab
     }
     
-    if (hasArg(ylab)) {
+    if (methods::hasArg(ylab)) {
         yl <- ylab
     }
     
@@ -88,7 +88,7 @@ plot.cec <- function(x, col, cex = 0.5, pch = 19, cex.centers = 1,
         means <- x$centers
     }
     
-    points(x$means.model, cex = cex.centers, pch = pch.centers)   
+    graphics::points(x$means.model, cex = cex.centers, pch = pch.centers)   
     
     if (ellipses) {    
         for (i in 1:nrow(means))     
@@ -96,7 +96,7 @@ plot.cec <- function(x, col, cex = 0.5, pch = 19, cex.centers = 1,
                 tryCatch({
                     cov <- covs[[i]]
                     pts <- ellipse(means[i, ], cov)
-                    lines(pts, lwd = ellipses.lwd)
+                    graphics::lines(pts, lwd = ellipses.lwd)
                 },
                 finally = {})
             }

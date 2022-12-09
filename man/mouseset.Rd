@@ -14,7 +14,27 @@ mouseset(
   dim = 2
 )
 }
+\arguments{
+\item{n}{The number of points (default: 4000).}
+
+\item{r.head}{The radius of the mouse's head (default: 2).}
+
+\item{r.left.ear, r.right.ear}{The radii of the left and right ear of the 
+mouse's head (default: 1.1).}
+
+\item{left.ear.dist, right.ear.dist}{The distance between the center of the 
+mouse's head and the center of the left and right ear (default: 2.5).}
+
+\item{dim}{The dimensionality of the mouse's head (default: 2).}
+}
+\value{
+A matrix with \code{n} rows and \code{dim} columns.
+}
 \description{
-Internal function to generate a cluster of points uniformly 
- distributed inside a Mickey mouse shape.
+\code{mouseset} generates a cluster of points uniformly 
+ distributed inside a "mouse head" shape.
+}
+\examples{
+plot(mouseset())
+
 }
