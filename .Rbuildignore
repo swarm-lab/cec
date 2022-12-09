@@ -1,11 +1,5 @@
 ^.*\.o$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-\.travis\.yml$
-\.idea$
 LICENSE$
-^cmake-build*
-CMakeLists.txt$
-CMakeFiles$
-^.*\.tar.gz$
-^.*\.sh$
+

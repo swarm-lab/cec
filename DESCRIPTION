@@ -1,15 +1,32 @@
 Package: CEC
+Type: Package
 Title: Cross-Entropy Clustering
-Version: 0.10.3
-Date: 2021-09-20
-Author: Konrad Kamieniecki [aut, cre], Przemyslaw Spurek [ctb]
-Maintainer: Konrad Kamieniecki <konrad.kamieniecki@alumni.uj.edu.pl>
-Description: Clustering that splits data into Gaussian type clusters. The implementation allows the simultaneous use of various type Gaussian mixture models, performs the reduction of unnecessary clusters and it's able to discover new groups. Based on Spurek, P. and Tabor, J. (2014) <doi:10.1016/j.patcog.2014.03.006>.
+Version: 0.11.0
+Date: 2022-12-15
+Authors@R: c(
+    person("Kamieniecki", "Konrad", email = "konrad.kamieniecki@alumni.uj.edu.pl", 
+      role = c("aut", "cre")),
+    person("Spurek", "Przemyslaw", email = "przemyslaw.spurek@gmail.com", 
+      role = c("ctb")),
+      person("Simon", "Garnier", email = "garnier@njit.edu", role = c("aut", "ctb"),
+      comment = c(ORCID = "0000-0002-3886-3974"))
+  )
+Maintainer: Simon Garnier <garnier@njit.edu>
+Description: Clustering that splits data into Gaussian type clusters. The 
+    implementation allows the simultaneous use of various type Gaussian mixture 
+    models, performs the reduction of unnecessary clusters and it's able to 
+    discover new groups. Based on Spurek, P. and Tabor, J. (2014) 
+    <doi:10.1016/j.patcog.2014.03.006>.
 ByteCompile: true
-URL: https://github.com/azureblue/cec
+URL: https://github.com/swarm-lab/cec
 Encoding: UTF-8
+LazyData: true
+Imports: 
+    graphics,
+    methods,
+    stats,
+    utils
 NeedsCompilation: yes
 SystemRequirements: C++11
 License: GPL-3
-Imports: graphics, methods, stats, utils
-Packaged: 2021-09-20 21:50:01 UTC; konrad
+RoxygenNote: 7.2.2
