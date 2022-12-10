@@ -2,6 +2,9 @@
 #include "../m.h"
 
 #include <R_ext/Lapack.h>
+#ifndef FCONE
+# define FCONE
+#endif
 
 const double ZERO_EPSILON = 1.0e-32;
 
@@ -21,7 +24,7 @@ static bool cholesky(const cec::mat &cov, cec::mat &dst) {
     int n = cov.n;
     int info;
     dst = cov;
-    dpotrf_("U", &n, dst.data(), &n, &info);
+    dpotrf_("U", &n, dst.data(), &n, &info FCONE);
     return info == 0;
 }
 
@@ -53,7 +56,7 @@ void cec::multiply(const mat &a, const mat &b, mat &dst) {
     }
     double zero = 0;
     double one = 1;
-    dsymm_("L", "L", &n, &n, &one, a.data(), &n, b.data(), &n, &zero, dst.data(), &n);
+    dsymm_("L", "L", &n, &n, &one, a.data(), &n, b.data(), &n, &zero, dst.data(), &n FCONE FCONE);
 }
 
 bool cec::invert(const mat &cov, mat &dst) {
@@ -61,7 +64,7 @@ bool cec::invert(const mat &cov, mat &dst) {
     int info;
     if (!cholesky(cov, dst))
         return false;
-    dpotri_("U", &n, dst.data(), &n, &info);
+    dpotri_("U", &n, dst.data(), &n, &info FCONE);
     for (int i = 0; i < n; i++)
         for (int j = i + 1; j < n; j++)
             dst[i][j] = dst[j][i];
@@ -72,7 +75,7 @@ bool cec::eigenvalues_calculator::eigenvalues(const cec::mat &cov, double *res) 
     int n = cov.n;
     int info;
     tmp = cov;
-    dsyev_("N", "U", &n, tmp.data(), &n, res, workspace.data(), &workspace.size, &info);
+    dsyev_("N", "U", &n, tmp.data(), &n, res, workspace.data(), &workspace.size, &info FCONE FCONE);
     return info == 0;
 }
 
