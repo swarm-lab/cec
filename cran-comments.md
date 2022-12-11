@@ -16,12 +16,18 @@
 
 There were no ERRORs or WARNINGs.
 
-There was 1 NOTE:
 "Possibly misspelled words in DESCRIPTION:
   CEC (16:17, 19:5)
   Spurek (19:33)"
    
 These are the correct spellings. 
+
+"Found the following (possibly) invalid URLs:
+      URL:
+        From: README.md
+        Message: Empty URL"
+
+Fixed. 
 
 ## Downstream dependencies
 
