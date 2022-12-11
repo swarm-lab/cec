@@ -1,6 +1,7 @@
 ## Test environments
 
-* local M1 OS X 12.3.1, R 4.2.2
+* local M1 OS X 13.0.1, R 4.2.2
+* local M1 OS X 13.0.1, R-devel
 * Github Actions "windows-latest (release)"
 * Github Actions "macOS-latest (release)"
 * Github Actions "ubuntu-latest (release)"
@@ -17,9 +18,10 @@ There were no ERRORs or WARNINGs.
 
 There was 1 NOTE:
 "Possibly misspelled words in DESCRIPTION:
-   Spurek (18:35)"
+  CEC (16:17, 19:5)
+  Spurek (19:33)"
    
-This is the correct spelling. 
+These are the correct spellings. 
 
 ## Downstream dependencies
 
