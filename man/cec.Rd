@@ -125,7 +125,7 @@ TRUE, at each iteration, before plotting it will wait for the user to press
 }
 \value{
 An object of class \code{cec} with the following attributes:
- \code{data}, \code{cluster}, \code{probabilities}, \code{centers},
+ \code{data}, \code{cluster}, \code{probability}, \code{centers},
  \code{cost.function}, \code{nclusters}, \code{iterations}, \code{cost},
  \code{covariances}, \code{covariances.model}, \code{time}.
 }

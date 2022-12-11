@@ -8,278 +8,386 @@
 
 ## Description
 
-The R Package CEC performs clustering based on the cross–entropy clustering (CEC) method, 
-which has been recently developed with the use of information theory. 
-The main advantage of CEC is that it combines the speed and simplicity of k-means with the ability 
-to use various Gaussian mixture models and reduce unnecessary clusters.
+[`CEC`](https://github.com/swarm-lab/cec) is an [`R`](https://cran.r-project.org)
+package that performs data points clustering using the cross–entropy clustering 
+(CEC) method[^1]. This method has been developed based on information theory and 
+combines the speed and simplicity of k-means with the ability to use various 
+Gaussian mixture models and automatically remove unnecessary clusters.
 
-The CEC package is a part of CRAN repository and it can be installed by the following command:
+[^1]: Tabor, J., & Spurek, P. (2014). Cross-entropy clustering. Pattern 
+Recognition, 47(9), 3046–3059. https://doi.org/10.1016/j.patcog.2014.03.006
+
+---
+
+## Installation
+
+[`CEC`](https://github.com/swarm-lab/cec) can be installed directly from 
+[CRAN](https://cran.r-project.org/) as follows:
 
 ```R
 install.packages("CEC")
+```
+
+You can also use the [`remotes`]() package to install the development version of 
+[`CEC`](https://github.com/swarm-lab/cec) as follows: 
+
+```R
+remotes::install_github()("swarm-lab/cec")
+```
+
+---
+
+## Basic usage
+
+The core function of the [`CEC`](https://github.com/swarm-lab/cec) package is 
+the `cec` function. In the simplest scenario, this function requires only two 
+arguments: an input data matrix (`x`) and the initial number of cluster centers 
+(`centers`). For instance, here is how to identify two clusters in the waiting 
+times between eruptions for the Old Faithful geyser in Yellowstone National Park, 
+Wyoming, USA: 
+
+```r
 library("CEC")
+data("faithful")
+clusters <- cec(as.matrix(faithful[, 2, drop = FALSE]), 2)
+clusters
 ```
 
-The basic usage comes down to the function `cec` with two arguments: input data (`x`) and the initial number of centers (`centers`):
+The function `cec` returns the following important information: 
 
-```R
-cec(x = ..., centers = ...)
-```
-Below, a simple session with **R** is presented, where the component
-(waiting) of the Old Faithful data set is split into two clusters:
++ `clusters$cluster`: the cluster membership of each data point;
++ `clusters$centers`: the coordinates of the centers of each cluster;
++ `clusters$covariances.model`: the model covariance of each cluster;
++ `clusters$probability`: the probability that a random data point belongs to a
+ given cluster. 
 
-```R
-library("CEC")
-attach(faithful)
-cec <- cec(matrix(faithful$waiting), 2)
-print(cec)
-```
+Additional information concerning the number of iterations, the cost (energy) 
+function, and the number of clusters at each iteration are also available.
 
-As the main result, CEC returns data cluster membership `cec$cluster`. The following parameters of 
-clusters can be obtained as well:
+You can now plot the results of the clustering process as follows: 
 
-- means (`cec$centers`)
-- covariances (`cec$covariances.model`)
-- probabilities (`cec$probability`)
+```r
+hist(faithful$waiting, prob = TRUE, main = "Time between Old Faithful eruptions", 
+     xlab = "Minutes", col = "lightgray", border = 0, ylim = c(0, 0.05))
 
-Additional information concerning the number of iterations, cost (energy) function and the number of clusters at each iteration are also available.
-
-Below, a session of **R** is presented which shows how to use the above parameters for plotting the data and the Gaussian models corresponding to the clusters.
-
-```R
-hist(faithful$waiting, prob = T, main = "Time between Old Faithful eruptions", xlab = "Minutes", 
-col = "lightgray", border = 0, ylim = c(0, 0.05))
-
-for(i in c(1:2))
-curve(cec$probability[i] * dnorm(x, mean = cec$centers[i], sd = sqrt(cec$covariances.model[[i]][1])),
-add = T, col = i + 1, lwd = 2)  
-```
-![](https://azureblue.github.io/cec/static/old.png)
-
-The CEC method, analogously to k-means, depends on the initial clusters memberships. Therefore, the initialization should be started a few times, which can be achieved using the `nstart` parameter.
-```R
-cec <- cec(x = ...,  centers = ..., nstart = ...)
+for (i in c(1:2)) {
+    curve(cec$probability[i] * dnorm(x, mean = cec$centers[i], 
+                                     sd = sqrt(cec$covariances.model[[i]][1])),
+          add = T, col = i + 1, lwd = 2)  
+}
 ```
 
-**Multiple threads can be used to speed up clustering (when `nstart > 1` ).** 
-It's driven by the `threads` parameter (more details in the package manual).
-```R
-cec <- cec(..., nstart = 100, threads = 4)
+<p align="center">
+  <img src="man/figures/old_faithful.png" alt="">
+</p>
+
+---
+
+## Cluster initialization
+
+Like k-means, the quality of the results produced by CEC depends on the choice 
+of initial cluster centers. The initial locations of the centers can be chosen 
+using the `centers.init` parameter of the `cec` function. It can be set to
+`"random"` to select the initial centers randomly, or to `"kmeans++"` to select 
+them via the [**k-means++** method](https://en.wikipedia.org/wiki/K-means%2B%2B).
+It is also recommended to run the clustering algorithm multiple times with 
+different cluster centers. This can easily be achieved using the `nstart` 
+parameter. For instance,
+
+```r
+clusters <- cec(as.matrix(faithful[, 2, drop = FALSE]), 2, method = "kmeans++", 
+    nstart = 10, threads = 4)
+clusters
 ```
 
-The initial locations of the centers can be chosen either **randomly** or using the **k-means++** method and it's driven by the `centers.init` parameter which can take one of the two values: `"random"` or `"kmeans++"`.
+will run the clustering algorithm 10 times, initializing it each time with the 
+output of the k-means++ algorithm. Only the best of the 10 runs (i.e. the run
+with the lowest cost function) will be returned by the function.
 
-Two essential parameter, in the context of CEC method, are `card.min` and `iter.max` that express minimal cluster size - the number of points, below which, the cluster is removed and the maximum number of iterations at each start, respectively.
+Note that, when `nstart > 1`, the clustering process can be sped-up by running 
+it in parallel threads using the `threads` parameter (more details in the 
+package manual).
 
-One of the most important properties of the CEC algorithm is that it can be applied to various Gaussian models. The CEC package includes the implementation of six Gaussian models, which can be specified by the parameter `type`.
+---
 
-Implemented Gaussian models (families)
---------------------------------------
+## Other important parameters
+
+`card.min` represents the minimal cluster size, i.e. the number of points below 
+which a cluster is removed from the analysis. It can be expressed as a number of 
+points or as a percentage of the data set size. 
+
+`iter.max` is the maximum allowed number of iterations of the algorithm at each 
+start. If the algorithm does not converge before `iter.max` is reached, the 
+function will stop and return the best result so far. 
+
+---
+
+## Available Gaussian distributions
+
+One of the most important properties of the CEC algorithm is that it can 
+combined various Gaussian models in the same clustering process. The CEC package 
+includes six Gaussian models, which can be specified via the parameter `type`.
+These models are: 
 
 ### General Gaussian distributions
+
 **`type = "all"`**
 
-The general Gaussian CEC algorithm gives similar results to those obtained by the Gaussian Mixture Models. 
-However, the CEC does not use the EM (Expectation Maximization) approach for minimization but a simple iteration process (Hartigan method). 
-Consequently, larger data sets can be processed in shorter time.
+The general Gaussian CEC algorithm gives similar results to those obtained by 
+Gaussian Mixture Models. However, the CEC does not use the EM (Expectation 
+Maximization) approach for minimization but a simple iteration process (Hartigan 
+method). Consequently, larger data sets can be processed in shorter time.
 
-The clustering will have a tendency to divide the data into clusters in the shape of ellipses (ellipsoids in higher dimensions). 
+CEC will have a tendency to divide the data into clusters in the shape of 
+ellipses (ellipsoids in higher dimensions). For instance: 
 
-```R
+```r
 data("fourGaussians")
-
 cec <- cec(fourGaussians, centers = 10, type = "all", nstart = 20)
-
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/all.png)
 
-### Spherical CEC 
+<p align="center">
+  <img src="man/figures/all.png" alt="">
+</p>
+
+### Spherical distributions 
+
 **`type = "spherical"`**
 
-The original distribution will be estimated by spherical (radial) densities, which will result in splitting the data into circle-like clusters of arbitrary sizes (balls in higher dimensions). 
+The original distribution will be approximated by spherical (radial) densities, 
+which will result in splitting the data into disk-like clusters of arbitrary 
+sizes (spheres in higher dimensions). 
 
-```R
+```r
 data("Tset")
-
 cec <- cec(x = Tset, centers = 10, type = "spherical", nstart = 5)
-
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/spherical.png)
 
-### Spherical CEC with fixed radius
+<p align="center">
+  <img src="man/figures/spherical.png" alt="">
+</p>
+
+### Spherical distributions with fixed radius
+
 **`type = "fixedr"`**
 
-Similarly to the general spherical model, the dataset will be divided into clusters resembling full circles, but with the radius determined by the `param` argument.
+Similarly to the general spherical model, the data set will be divided into 
+clusters resembling disks, but with their radius determined by the `param` 
+argument.
 
-```R
+```r
 data("Tset")
-
 cec <- cec(x = Tset, centers = 10, type = "fixedr", param = 0.01, nstart = 20)
-
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/fixedr.png)
 
-### Diagonal CEC
+<p align="center">
+  <img src="man/figures/fixedr.png" alt="">
+</p>
+
+### Diagonal distributions
+
 **`type = "diagonal"`**
 
-In this case, the data will be described by ellipses for which the main semi-major axes are parallel to the axes of the coordinate system. 
+In this case, the data will be described by ellipses for which the main 
+semi-major axes are parallel to the axes of the coordinate system. 
 
-```R
+```r
 data("Tset")
-
 cec <- cec(x = Tset, centers = 10, type = "diagonal", nstart = 5)
-
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/diagonal.png) 
 
-### Fixed covariance CEC
+<p align="center">
+  <img src="man/figures/diagonal.png" alt="">
+</p>
+
+### Fixed covariance distributions
+
 **`type = "covariance"`**
 
-This model contains Gaussians with fixed covariance matrix.
+This model clusters the data using Gaussians with a fixed covariance. The 
+covariance matrix is passed to the `param` argument. 
 
-```R
+```r
 data("Tset")
-
 cec <- cec(x = Tset, centers = 10, card.min = '10%', type = "covariance",  
-param = matrix(c(0.04, 0, 0, 0.01), 2))
-
+    param = matrix(c(0.04,  0, 
+                     0,     0.01), 2))
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/cov.png)
 
-In the above example, the following covariance matrix has been used, which results in covering the data by fixed shape ellipses:
+<p align="center">
+  <img src="man/figures/cov.png" alt="">
+</p>
 
-![
-0.04  0.00
-0.00  0.01      
-](https://azureblue.github.io/cec/static/covariance.png)
+### Fixed eigenvalues distributions
 
-
-### Fixed eigenvalues CEC
 **`type = "eigenvalues"`**
 
-Model based on Gaussians with arbitrary fixed eigenvalues.
+This is similar to the previous example, but here the Gaussians have fixed 
+eigenvalues. The eigenvalues are passed to the `param` argument. 
 
-```R
+```r
 data("Tset")
-
-cec <- cec(x = Tset, centers = 10, type = "eigenvalues", param = c(0.01, 0.001), nstart = 5)
-
+cec <- cec(x = Tset, centers = 10, type = "eigenvalues", param = c(0.01, 0.001), 
+    nstart = 5)
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/eigen.png)
 
-In the above example, two eigenvalues: **λ₁=0.01** and **λ₂=0.001** are used, which results in covering the data with ellipses having fixed semi axes (corresponding to the eigenvalues). 
+<p align="center">
+  <img src="man/figures/eigen.png" alt="">
+</p>
 
-### Fixed mean CEC
+### Fixed mean distributions
+
 **`type = "mean"`**
 
-Model based on Gaussians with fixed means.
+In this condition, the data is clustered using Gaussians with fixed mean values.
+The mean values of the data dimensions are passed to the `param` argument. 
 
-```R
+```r
 data("Tset")
-data("threeGaussians")
-
 cec <- cec(Tset, 4, "mean", param = c(0.48, 0.48), nstart = 5)
 plot(cec, asp = 1)
+```
 
+<p align="center">
+  <img src="man/figures/mean1.png" alt="">
+</p>
+
+```r
+data("threeGaussians")
 cec <- cec(threeGaussians,4, "mean", param = c(0, 0), nstart = 10)
 plot(cec)
 ```
-![](https://azureblue.github.io/cec/static/mean1.png) 
-![](https://azureblue.github.io/cec/static/mean2.png)
 
+<p align="center">
+  <img src="man/figures/mean2.png" alt="">
+</p>
 
-A mix of the Gaussian models
-----------------------------
+---
 
-One of the most powerful properties of the CEC algorithm is the possibility of mixing models. More precisely, the mixed models can be specified by giving a list of cluster types (and a list of parameters if needed).
+## Mixing Gaussian distributions
 
-```R
-cec(x = ..., centers = ..., type = c("all", "diagonal", ...), param = ...).
-```
+One of the most powerful properties of the CEC algorithm is the possibility of 
+mixing Gaussian models together. More precisely, the mixed models can be 
+specified by giving a list of cluster types (and a list of corresponding 
+parameters, if needed).
 
-```R
+```r
 data("mixShapes")
-
 cec <- cec(mixShapes, 7, iter.max = 3, 
-type = c("fixedr", "fixedr", "eigen", "eigen",  "eigen", "eigen", "eigen"),  
-param = list(350, 350, c(9000, 8), c(9000, 8), c(9000, 8), c(9000, 8), c(9000, 8)), nstart = 500)
-
+    type = c("fixedr", "fixedr", "eigen", "eigen",  "eigen", "eigen", "eigen"),  
+    param = list(350, 350, c(9000, 8), c(9000, 8), 
+                 c(9000, 8), c(9000, 8), c(9000, 8)), 
+    nstart = 500, threads = 10)
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/mix.png)
 
+<p align="center">
+  <img src="man/figures/mix.png" alt="">
+</p>
 
-CEC Split
----------
+---
 
-CEC Split method discovers new clusters after initial clustering, 
-by recursively trying to split each cluster into two with lower cost function.
+## Discovering clusters by splitting
 
+The `cec` function includes an option to discover new clusters after the initial
+clustering has occurred. This is done by recursively trying to split each 
+cluster into two smaller clusters that would lower the cost function.
 
-To enable split method, the `split` argument must be set to `TRUE`.
-```R
-cec <- cec(x = ...,  centers = ..., split = T)
-```
+To enable the splitting method, the `split` argument must be set to `TRUE` in 
+the `cec` function. For instance: 
 
-There are four parameters (with their default values) that control the split mode:
-`split.depth = 8` , `split.tries   = 5`, `split.limit   = 100`, `split.initial.starts = 1`. 
-The description of those parameters is provided in the package manual. Using `nstart` parameter, 
-the whole procedure, from start to end (initial clustering and splitting), can be
-repeated multiple times. In this, case we can also use multiple threads (`threads` parameter).
-
-An example usage is presented  below:
-```R
+```r
 data("fourGaussians")
+par(mfrow = c(1,2))
 
-cec <- cec(fourGaussians, centers = 1, type = "all", split = T)
+# No splitting
+cec <- cec(fourGaussians, centers = 1, type = "all")
+plot(cec, asp = 1, main = "No splitting")
 
-plot(cec, asp = 1)
+# With splitting
+cec <- cec(fourGaussians, centers = 1, type = "all", split = TRUE)
+plot(cec, asp = 1, main = "With splitting")
 ```
-![](https://azureblue.github.io/cec/static/split_4_gaussians.png)
 
-The split method will be used implicitly when `centers` argument is not provided.
-```R
+<p align="center">
+  <img src="man/figures/split_4_gaussians.png" alt="">
+</p>
+
+Combined with the `nstart` parameter, the whole procedure, from start to end 
+(initial clustering and splitting), can be repeated multiple times. In this, 
+case we can also use multiple threads to speed the process up (`threads` 
+parameter).
+
+Note that the splitting method will be used implicitly when the `centers` 
+argument is not provided.
+
+```r
 data("mixShapes")
-
 cec <- cec(mixShapes)
-
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/split_mix.png)
 
-The next two examples show clustering results using split method on a data set of 20 gaussians 
-generated by the following code:
-```R
-twenty.gaussians = matrix(c(0, 0), 0, 2)
-for (i in 0:(19)) {
-G = matrix(rnorm(400), 200, 2)
-G[,1] = G[,1] + i %% 5 * 8 + stats::runif(1,-1, 1)
-G[,2] = G[,2] + i %/% 5 * 8 + stats::runif(1,-1, 1)
-twenty.gaussians = rbind(twenty.gaussians, G)
+<p align="center">
+  <img src="man/figures/split_mix.png" alt="">
+</p>
+
+Finally, four parameters control the splitting mode: `split.depth`, `split.tries`, 
+`split.limit`, and `split.initial.starts`. The description of those parameters 
+and their default values are provided in the package manual. They can be useful
+to help the algorithm produce meaningful clustering in more complex situations. 
+
+For instance, we can generate a data set of 20 Gaussians with the following code:
+
+```r
+twenty.gaussians <- matrix(NA, 0, 2)
+for (i in 0:19) {
+    G <- matrix(rnorm(400), 200, 2)
+    G[,1] <- G[,1] + i %% 5 * 8 + stats::runif(1,-1, 1)
+    G[,2] <- G[,2] + i %/% 5 * 8 + stats::runif(1,-1, 1)
+    twenty.gaussians <- rbind(twenty.gaussians, G)
 }
 ```
-In the following example, the usage of general gaussian distributions (`type = 'all'`) doesn't require 
-any modification of default split parameters. Only the `card.min` needs to be set to a much lower value.
-```R
+
+Using a general Gaussian distributions model (`type = 'all'`) and no initial 
+centers, the algorithm finds easily the 20 Gaussian clusters, and we only need 
+to provide it with a low `card.min` value.
+
+```r
 cec <- cec(twenty.gaussians, card.min="1%")
-
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/split_20_gaussians_all.png)
 
-Some data sets may require tuning of the split parameters. 
-Using spherical densities (`type = 'spherical'`) on the same data, the `split.depth`
-needs to be increased significantly as well as `split.tries`. As in the previous example the `card.min` is changed.
-```
-cec <- cec(twenty.gaussians,, "sp", split.depth = 25, split.tries=15, card.min="1%")
+<p align="center">
+  <img src="man/figures/split_20_gaussians_all.png" alt="">
+</p>
 
+However, using spherical densities (`type = 'spherical'`) on the same data set
+will lead to sub-optimal results: 
+
+```r
+cec <- cec(twenty.gaussians, type = "spherical", card.min="1%")
 plot(cec, asp = 1)
 ```
-![](https://azureblue.github.io/cec/static/split_20_gaussians_spherical.png)
 
+<p align="center">
+  <img src="man/figures/split_20_gaussians_spherical_bad.png" alt="">
+</p>
+
+We can help the algorithm identify a more satisfying solution by playing with 
+the `split.depth` and `split.tries` parameters, for instance.
+
+```r
+cec <- cec(twenty.gaussians, type = "spherical", card.min="1%", 
+    split.depth = 25, split.tries = 15)
+plot(cec, asp = 1)
+```
+
+<p align="center">
+  <img src="man/figures/split_20_gaussians_spherical_good.png" alt="">
+</p>
