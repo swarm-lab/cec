@@ -76,6 +76,7 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
+
 <div class="section level1">
 <div class="page-header"><h1 id="cec---cross-entropy-clustering-">CEC - Cross Entropy Clustering <img src="reference/figures/logo.png" align="right" alt="" width="120"><a class="anchor" aria-label="anchor" href="#cec---cross-entropy-clustering-"></a>
 </h1></div>
@@ -84,212 +85,254 @@
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
-<p>The R Package CEC performs clustering based on the cross–entropy clustering (CEC) method, which has been recently developed with the use of information theory. The main advantage of CEC is that it combines the speed and simplicity of k-means with the ability to use various Gaussian mixture models and reduce unnecessary clusters.</p>
-<p>The CEC package is a part of CRAN repository and it can be installed by the following command:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"CEC"</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/swarm-lab/cec" class="external-link">"CEC"</a></span><span class="op">)</span></span></code></pre></div>
-<p>The basic usage comes down to the function <code>cec</code> with two arguments: input data (<code>x</code>) and the initial number of centers (<code>centers</code>):</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">...</span>, centers <span class="op">=</span> <span class="va">...</span><span class="op">)</span></span></code></pre></div>
-<p>Below, a simple session with <strong>R</strong> is presented, where the component (waiting) of the Old Faithful data set is split into two clusters:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/swarm-lab/cec" class="external-link">"CEC"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/attach.html" class="external-link">attach</a></span><span class="op">(</span><span class="va">faithful</span><span class="op">)</span></span>
-<span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">faithful</span><span class="op">$</span><span class="va">waiting</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cec</span><span class="op">)</span></span></code></pre></div>
-<p>As the main result, CEC returns data cluster membership <code>cec$cluster</code>. The following parameters of clusters can be obtained as well:</p>
-<ul>
-<li>means (<code>cec$centers</code>)</li>
-<li>covariances (<code>cec$covariances.model</code>)</li>
-<li>probabilities (<code>cec$probability</code>)</li>
-</ul>
-<p>Additional information concerning the number of iterations, cost (energy) function and the number of clusters at each iteration are also available.</p>
-<p>Below, a session of <strong>R</strong> is presented which shows how to use the above parameters for plotting the data and the Gaussian models corresponding to the clusters.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">faithful</span><span class="op">$</span><span class="va">waiting</span>, prob <span class="op">=</span> <span class="cn">T</span>, main <span class="op">=</span> <span class="st">"Time between Old Faithful eruptions"</span>, xlab <span class="op">=</span> <span class="st">"Minutes"</span>, </span>
-<span>col <span class="op">=</span> <span class="st">"lightgray"</span>, border <span class="op">=</span> <span class="fl">0</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/curve.html" class="external-link">curve</a></span><span class="op">(</span><span class="va">cec</span><span class="op">$</span><span class="va">probability</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="va">cec</span><span class="op">$</span><span class="va">centers</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">cec</span><span class="op">$</span><span class="va">covariances.model</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>add <span class="op">=</span> <span class="cn">T</span>, col <span class="op">=</span> <span class="va">i</span> <span class="op">+</span> <span class="fl">1</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  </span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/old.png"></p>
-<p>The CEC method, analogously to k-means, depends on the initial clusters memberships. Therefore, the initialization should be started a few times, which can be achieved using the <code>nstart</code> parameter.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">...</span>,  centers <span class="op">=</span> <span class="va">...</span>, nstart <span class="op">=</span> <span class="va">...</span><span class="op">)</span></span></code></pre></div>
-<p><strong>Multiple threads can be used to speed up clustering (when <code>nstart &gt; 1</code> ).</strong> It’s driven by the <code>threads</code> parameter (more details in the package manual).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">...</span>, nstart <span class="op">=</span> <span class="fl">100</span>, threads <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-<p>The initial locations of the centers can be chosen either <strong>randomly</strong> or using the <strong>k-means++</strong> method and it’s driven by the <code>centers.init</code> parameter which can take one of the two values: <code>"random"</code> or <code>"kmeans++"</code>.</p>
-<p>Two essential parameter, in the context of CEC method, are <code>card.min</code> and <code>iter.max</code> that express minimal cluster size - the number of points, below which, the cluster is removed and the maximum number of iterations at each start, respectively.</p>
-<p>One of the most important properties of the CEC algorithm is that it can be applied to various Gaussian models. The CEC package includes the implementation of six Gaussian models, which can be specified by the parameter <code>type</code>.</p>
+<p><a href="https://github.com/swarm-lab/cec" class="external-link"><code>CEC</code></a> is an <a href="https://cran.r-project.org" class="external-link"><code>R</code></a> package that performs data points clustering using the cross–entropy clustering (CEC) method<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. This method has been developed based on information theory and combines the speed and simplicity of k-means with the ability to use various Gaussian mixture models and automatically remove unnecessary clusters.</p>
+<hr>
 </div>
 <div class="section level2">
-<h2 id="implemented-gaussian-models-families">Implemented Gaussian models (families)<a class="anchor" aria-label="anchor" href="#implemented-gaussian-models-families"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p><a href="https://github.com/swarm-lab/cec" class="external-link"><code>CEC</code></a> can be installed directly from <a href="https://cran.r-project.org/" class="external-link">CRAN</a> as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"CEC"</span><span class="op">)</span></span></code></pre></div>
+<p>You can also use the <a href=""><code>remotes</code></a> package to install the development version of <a href="https://github.com/swarm-lab/cec" class="external-link"><code>CEC</code></a> as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="st">"swarm-lab/cec"</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="basic-usage">Basic usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
+</h2>
+<p>The core function of the <a href="https://github.com/swarm-lab/cec" class="external-link"><code>CEC</code></a> package is the <code>cec</code> function. In the simplest scenario, this function requires only two arguments: an input data matrix (<code>x</code>) and the initial number of cluster centers (<code>centers</code>). For instance, here is how to identify two clusters in the waiting times between eruptions for the Old Faithful geyser in Yellowstone National Park, Wyoming, USA:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/swarm-lab/cec" class="external-link">"CEC"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"faithful"</span><span class="op">)</span></span>
+<span><span class="va">clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">faithful</span><span class="op">[</span>, <span class="fl">2</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">clusters</span></span></code></pre></div>
+<p>The function <code>cec</code> returns the following important information:</p>
+<ul>
+<li>
+<code>clusters$cluster</code>: the cluster membership of each data point;</li>
+<li>
+<code>clusters$centers</code>: the coordinates of the centers of each cluster;</li>
+<li>
+<code>clusters$covariances.model</code>: the model covariance of each cluster;</li>
+<li>
+<code>clusters$probability</code>: the probability that a random data point belongs to a given cluster.</li>
+</ul>
+<p>Additional information concerning the number of iterations, the cost (energy) function, and the number of clusters at each iteration are also available.</p>
+<p>You can now plot the results of the clustering process as follows:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">faithful</span><span class="op">$</span><span class="va">waiting</span>, prob <span class="op">=</span> <span class="cn">TRUE</span>, main <span class="op">=</span> <span class="st">"Time between Old Faithful eruptions"</span>, </span>
+<span>     xlab <span class="op">=</span> <span class="st">"Minutes"</span>, col <span class="op">=</span> <span class="st">"lightgray"</span>, border <span class="op">=</span> <span class="fl">0</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/curve.html" class="external-link">curve</a></span><span class="op">(</span><span class="va">cec</span><span class="op">$</span><span class="va">probability</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="va">cec</span><span class="op">$</span><span class="va">centers</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, </span>
+<span>                                     sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">cec</span><span class="op">$</span><span class="va">covariances.model</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>          add <span class="op">=</span> <span class="cn">T</span>, col <span class="op">=</span> <span class="va">i</span> <span class="op">+</span> <span class="fl">1</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  </span>
+<span><span class="op">}</span></span></code></pre></div>
+<p align="center">
+<img src="reference/figures/old_faithful.png" alt=""></p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="cluster-initialization">Cluster initialization<a class="anchor" aria-label="anchor" href="#cluster-initialization"></a>
+</h2>
+<p>Like k-means, the quality of the results produced by CEC depends on the choice of initial cluster centers. The initial locations of the centers can be chosen using the <code>centers.init</code> parameter of the <code>cec</code> function. It can be set to <code>"random"</code> to select the initial centers randomly, or to <code>"kmeans++"</code> to select them via the <a href="https://en.wikipedia.org/wiki/K-means%2B%2B" class="external-link"><strong>k-means++</strong> method</a>. It is also recommended to run the clustering algorithm multiple times with different cluster centers. This can easily be achieved using the <code>nstart</code> parameter. For instance,</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">faithful</span><span class="op">[</span>, <span class="fl">2</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span>, <span class="fl">2</span>, method <span class="op">=</span> <span class="st">"kmeans++"</span>, </span>
+<span>    nstart <span class="op">=</span> <span class="fl">10</span>, threads <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">clusters</span></span></code></pre></div>
+<p>will run the clustering algorithm 10 times, initializing it each time with the output of the k-means++ algorithm. Only the best of the 10 runs (i.e. the run with the lowest cost function) will be returned by the function.</p>
+<p>Note that, when <code>nstart &gt; 1</code>, the clustering process can be sped-up by running it in parallel threads using the <code>threads</code> parameter (more details in the package manual).</p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="other-important-parameters">Other important parameters<a class="anchor" aria-label="anchor" href="#other-important-parameters"></a>
+</h2>
+<p><code>card.min</code> represents the minimal cluster size, i.e. the number of points below which a cluster is removed from the analysis. It can be expressed as a number of points or as a percentage of the data set size.</p>
+<p><code>iter.max</code> is the maximum allowed number of iterations of the algorithm at each start. If the algorithm does not converge before <code>iter.max</code> is reached, the function will stop and return the best result so far.</p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="available-gaussian-distributions">Available Gaussian distributions<a class="anchor" aria-label="anchor" href="#available-gaussian-distributions"></a>
+</h2>
+<p>One of the most important properties of the CEC algorithm is that it can combined various Gaussian models in the same clustering process. The CEC package includes six Gaussian models, which can be specified via the parameter <code>type</code>. These models are:</p>
 <div class="section level3">
 <h3 id="general-gaussian-distributions">General Gaussian distributions<a class="anchor" aria-label="anchor" href="#general-gaussian-distributions"></a>
 </h3>
 <p><strong><code>type = "all"</code></strong></p>
-<p>The general Gaussian CEC algorithm gives similar results to those obtained by the Gaussian Mixture Models. However, the CEC does not use the EM (Expectation Maximization) approach for minimization but a simple iteration process (Hartigan method). Consequently, larger data sets can be processed in shorter time.</p>
-<p>The clustering will have a tendency to divide the data into clusters in the shape of ellipses (ellipsoids in higher dimensions).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p>The general Gaussian CEC algorithm gives similar results to those obtained by Gaussian Mixture Models. However, the CEC does not use the EM (Expectation Maximization) approach for minimization but a simple iteration process (Hartigan method). Consequently, larger data sets can be processed in shorter time.</p>
+<p>CEC will have a tendency to divide the data into clusters in the shape of ellipses (ellipsoids in higher dimensions). For instance:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"fourGaussians"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">fourGaussians</span>, centers <span class="op">=</span> <span class="fl">10</span>, type <span class="op">=</span> <span class="st">"all"</span>, nstart <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/all.png"></p>
+<p align="center">
+<img src="reference/figures/all.png" alt=""></p>
 </div>
 <div class="section level3">
-<h3 id="spherical-cec">Spherical CEC<a class="anchor" aria-label="anchor" href="#spherical-cec"></a>
+<h3 id="spherical-distributions">Spherical distributions<a class="anchor" aria-label="anchor" href="#spherical-distributions"></a>
 </h3>
 <p><strong><code>type = "spherical"</code></strong></p>
-<p>The original distribution will be estimated by spherical (radial) densities, which will result in splitting the data into circle-like clusters of arbitrary sizes (balls in higher dimensions).</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>The original distribution will be approximated by spherical (radial) densities, which will result in splitting the data into disk-like clusters of arbitrary sizes (spheres in higher dimensions).</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Tset"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Tset</span>, centers <span class="op">=</span> <span class="fl">10</span>, type <span class="op">=</span> <span class="st">"spherical"</span>, nstart <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/spherical.png"></p>
+<p align="center">
+<img src="reference/figures/spherical.png" alt=""></p>
 </div>
 <div class="section level3">
-<h3 id="spherical-cec-with-fixed-radius">Spherical CEC with fixed radius<a class="anchor" aria-label="anchor" href="#spherical-cec-with-fixed-radius"></a>
+<h3 id="spherical-distributions-with-fixed-radius">Spherical distributions with fixed radius<a class="anchor" aria-label="anchor" href="#spherical-distributions-with-fixed-radius"></a>
 </h3>
 <p><strong><code>type = "fixedr"</code></strong></p>
-<p>Similarly to the general spherical model, the dataset will be divided into clusters resembling full circles, but with the radius determined by the <code>param</code> argument.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>Similarly to the general spherical model, the data set will be divided into clusters resembling disks, but with their radius determined by the <code>param</code> argument.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Tset"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Tset</span>, centers <span class="op">=</span> <span class="fl">10</span>, type <span class="op">=</span> <span class="st">"fixedr"</span>, param <span class="op">=</span> <span class="fl">0.01</span>, nstart <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/fixedr.png"></p>
+<p align="center">
+<img src="reference/figures/fixedr.png" alt=""></p>
 </div>
 <div class="section level3">
-<h3 id="diagonal-cec">Diagonal CEC<a class="anchor" aria-label="anchor" href="#diagonal-cec"></a>
+<h3 id="diagonal-distributions">Diagonal distributions<a class="anchor" aria-label="anchor" href="#diagonal-distributions"></a>
 </h3>
 <p><strong><code>type = "diagonal"</code></strong></p>
 <p>In this case, the data will be described by ellipses for which the main semi-major axes are parallel to the axes of the coordinate system.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Tset"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Tset</span>, centers <span class="op">=</span> <span class="fl">10</span>, type <span class="op">=</span> <span class="st">"diagonal"</span>, nstart <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/diagonal.png"></p>
+<p align="center">
+<img src="reference/figures/diagonal.png" alt=""></p>
 </div>
 <div class="section level3">
-<h3 id="fixed-covariance-cec">Fixed covariance CEC<a class="anchor" aria-label="anchor" href="#fixed-covariance-cec"></a>
+<h3 id="fixed-covariance-distributions">Fixed covariance distributions<a class="anchor" aria-label="anchor" href="#fixed-covariance-distributions"></a>
 </h3>
 <p><strong><code>type = "covariance"</code></strong></p>
-<p>This model contains Gaussians with fixed covariance matrix.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p>This model clusters the data using Gaussians with a fixed covariance. The covariance matrix is passed to the <code>param</code> argument.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Tset"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Tset</span>, centers <span class="op">=</span> <span class="fl">10</span>, card.min <span class="op">=</span> <span class="st">'10%'</span>, type <span class="op">=</span> <span class="st">"covariance"</span>,  </span>
-<span>param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.04</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0.01</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
+<span>    param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.04</span>,  <span class="fl">0</span>, </span>
+<span>                     <span class="fl">0</span>,     <span class="fl">0.01</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/cov.png"></p>
-<p>In the above example, the following covariance matrix has been used, which results in covering the data by fixed shape ellipses:</p>
-<div class="figure">
-<img src="https://azureblue.github.io/cec/static/covariance.png" alt=""><p class="caption">0.04 0.00 0.00 0.01<br></p>
-</div>
+<p align="center">
+<img src="reference/figures/cov.png" alt=""></p>
 </div>
 <div class="section level3">
-<h3 id="fixed-eigenvalues-cec">Fixed eigenvalues CEC<a class="anchor" aria-label="anchor" href="#fixed-eigenvalues-cec"></a>
+<h3 id="fixed-eigenvalues-distributions">Fixed eigenvalues distributions<a class="anchor" aria-label="anchor" href="#fixed-eigenvalues-distributions"></a>
 </h3>
 <p><strong><code>type = "eigenvalues"</code></strong></p>
-<p>Model based on Gaussians with arbitrary fixed eigenvalues.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>This is similar to the previous example, but here the Gaussians have fixed eigenvalues. The eigenvalues are passed to the <code>param</code> argument.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Tset"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Tset</span>, centers <span class="op">=</span> <span class="fl">10</span>, type <span class="op">=</span> <span class="st">"eigenvalues"</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.001</span><span class="op">)</span>, nstart <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span></span>
+<span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Tset</span>, centers <span class="op">=</span> <span class="fl">10</span>, type <span class="op">=</span> <span class="st">"eigenvalues"</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.001</span><span class="op">)</span>, </span>
+<span>    nstart <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/eigen.png"></p>
-<p>In the above example, two eigenvalues: <strong>λ₁=0.01</strong> and <strong>λ₂=0.001</strong> are used, which results in covering the data with ellipses having fixed semi axes (corresponding to the eigenvalues).</p>
+<p align="center">
+<img src="reference/figures/eigen.png" alt=""></p>
 </div>
 <div class="section level3">
-<h3 id="fixed-mean-cec">Fixed mean CEC<a class="anchor" aria-label="anchor" href="#fixed-mean-cec"></a>
+<h3 id="fixed-mean-distributions">Fixed mean distributions<a class="anchor" aria-label="anchor" href="#fixed-mean-distributions"></a>
 </h3>
 <p><strong><code>type = "mean"</code></strong></p>
-<p>Model based on Gaussians with fixed means.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p>In this condition, the data is clustered using Gaussians with fixed mean values. The mean values of the data dimensions are passed to the <code>param</code> argument.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Tset"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"threeGaussians"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">Tset</span>, <span class="fl">4</span>, <span class="st">"mean"</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.48</span>, <span class="fl">0.48</span><span class="op">)</span>, nstart <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p align="center">
+<img src="reference/figures/mean1.png" alt=""></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"threeGaussians"</span><span class="op">)</span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">threeGaussians</span>,<span class="fl">4</span>, <span class="st">"mean"</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, nstart <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/mean1.png"><img src="https://azureblue.github.io/cec/static/mean2.png"></p>
+<p align="center">
+<img src="reference/figures/mean2.png" alt=""></p>
+<hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="a-mix-of-the-gaussian-models">A mix of the Gaussian models<a class="anchor" aria-label="anchor" href="#a-mix-of-the-gaussian-models"></a>
+<h2 id="mixing-gaussian-distributions">Mixing Gaussian distributions<a class="anchor" aria-label="anchor" href="#mixing-gaussian-distributions"></a>
 </h2>
-<p>One of the most powerful properties of the CEC algorithm is the possibility of mixing models. More precisely, the mixed models can be specified by giving a list of cluster types (and a list of parameters if needed).</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cec</span>(<span class="at">x =</span> ..., <span class="at">centers =</span> ..., <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"all"</span>, <span class="st">"diagonal"</span>, ...), <span class="at">param =</span> ...).</span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p>One of the most powerful properties of the CEC algorithm is the possibility of mixing Gaussian models together. More precisely, the mixed models can be specified by giving a list of cluster types (and a list of corresponding parameters, if needed).</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mixShapes"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">mixShapes</span>, <span class="fl">7</span>, iter.max <span class="op">=</span> <span class="fl">3</span>, </span>
-<span>type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fixedr"</span>, <span class="st">"fixedr"</span>, <span class="st">"eigen"</span>, <span class="st">"eigen"</span>,  <span class="st">"eigen"</span>, <span class="st">"eigen"</span>, <span class="st">"eigen"</span><span class="op">)</span>,  </span>
-<span>param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">350</span>, <span class="fl">350</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span>, nstart <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
-<span></span>
+<span>    type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fixedr"</span>, <span class="st">"fixedr"</span>, <span class="st">"eigen"</span>, <span class="st">"eigen"</span>,  <span class="st">"eigen"</span>, <span class="st">"eigen"</span>, <span class="st">"eigen"</span><span class="op">)</span>,  </span>
+<span>    param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">350</span>, <span class="fl">350</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span>, </span>
+<span>                 <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9000</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>    nstart <span class="op">=</span> <span class="fl">500</span>, threads <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/mix.png"></p>
+<p align="center">
+<img src="reference/figures/mix.png" alt=""></p>
+<hr>
 </div>
 <div class="section level2">
-<h2 id="cec-split">CEC Split<a class="anchor" aria-label="anchor" href="#cec-split"></a>
+<h2 id="discovering-clusters-by-splitting">Discovering clusters by splitting<a class="anchor" aria-label="anchor" href="#discovering-clusters-by-splitting"></a>
 </h2>
-<p>CEC Split method discovers new clusters after initial clustering, by recursively trying to split each cluster into two with lower cost function.</p>
-<p>To enable split method, the <code>split</code> argument must be set to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">...</span>,  centers <span class="op">=</span> <span class="va">...</span>, split <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p>There are four parameters (with their default values) that control the split mode: <code>split.depth = 8</code> , <code>split.tries   = 5</code>, <code>split.limit   = 100</code>, <code>split.initial.starts = 1</code>. The description of those parameters is provided in the package manual. Using <code>nstart</code> parameter, the whole procedure, from start to end (initial clustering and splitting), can be repeated multiple times. In this, case we can also use multiple threads (<code>threads</code> parameter).</p>
-<p>An example usage is presented below:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<p>The <code>cec</code> function includes an option to discover new clusters after the initial clustering has occurred. This is done by recursively trying to split each cluster into two smaller clusters that would lower the cost function.</p>
+<p>To enable the splitting method, the <code>split</code> argument must be set to <code>TRUE</code> in the <code>cec</code> function. For instance:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"fourGaussians"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">fourGaussians</span>, centers <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="st">"all"</span>, split <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co"># No splitting</span></span>
+<span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">fourGaussians</span>, centers <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span>, main <span class="op">=</span> <span class="st">"No splitting"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/split_4_gaussians.png"></p>
-<p>The split method will be used implicitly when <code>centers</code> argument is not provided.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<span><span class="co"># With splitting</span></span>
+<span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">fourGaussians</span>, centers <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="st">"all"</span>, split <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span>, main <span class="op">=</span> <span class="st">"With splitting"</span><span class="op">)</span></span></code></pre></div>
+<p align="center">
+<img src="reference/figures/split_4_gaussians.png" alt=""></p>
+<p>Combined with the <code>nstart</code> parameter, the whole procedure, from start to end (initial clustering and splitting), can be repeated multiple times. In this, case we can also use multiple threads to speed the process up (<code>threads</code> parameter).</p>
+<p>Note that the splitting method will be used implicitly when the <code>centers</code> argument is not provided.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mixShapes"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">mixShapes</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/split_mix.png"></p>
-<p>The next two examples show clustering results using split method on a data set of 20 gaussians generated by the following code:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">twenty.gaussians</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="fl">19</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span><span class="va">G</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">400</span><span class="op">)</span>, <span class="fl">200</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">G</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">=</span> <span class="va">G</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">i</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">5</span> <span class="op">*</span> <span class="fl">8</span> <span class="op">+</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">G</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">=</span> <span class="va">G</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="va">i</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%/%</a></span> <span class="fl">5</span> <span class="op">*</span> <span class="fl">8</span> <span class="op">+</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">twenty.gaussians</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">twenty.gaussians</span>, <span class="va">G</span><span class="op">)</span></span>
+<p align="center">
+<img src="reference/figures/split_mix.png" alt=""></p>
+<p>Finally, four parameters control the splitting mode: <code>split.depth</code>, <code>split.tries</code>, <code>split.limit</code>, and <code>split.initial.starts</code>. The description of those parameters and their default values are provided in the package manual. They can be useful to help the algorithm produce meaningful clustering in more complex situations.</p>
+<p>For instance, we can generate a data set of 20 Gaussians with the following code:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">twenty.gaussians</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">19</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">G</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">400</span><span class="op">)</span>, <span class="fl">200</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span>    <span class="va">G</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">G</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="va">i</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">5</span> <span class="op">*</span> <span class="fl">8</span> <span class="op">+</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="va">G</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">G</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="va">i</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%/%</a></span> <span class="fl">5</span> <span class="op">*</span> <span class="fl">8</span> <span class="op">+</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="va">twenty.gaussians</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">twenty.gaussians</span>, <span class="va">G</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>In the following example, the usage of general gaussian distributions (<code>type = 'all'</code>) doesn’t require any modification of default split parameters. Only the <code>card.min</code> needs to be set to a much lower value.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<p>Using a general Gaussian distributions model (<code>type = 'all'</code>) and no initial centers, the algorithm finds easily the 20 Gaussian clusters, and we only need to provide it with a low <code>card.min</code> value.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">twenty.gaussians</span>, card.min<span class="op">=</span><span class="st">"1%"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="https://azureblue.github.io/cec/static/split_20_gaussians_all.png"></p>
-<p>Some data sets may require tuning of the split parameters. Using spherical densities (<code>type = 'spherical'</code>) on the same data, the <code>split.depth</code> needs to be increased significantly as well as <code>split.tries</code>. As in the previous example the <code>card.min</code> is changed.</p>
-<pre><code><span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">twenty.gaussians</span>,, <span class="st">"sp"</span>, split.depth <span class="op">=</span> <span class="fl">25</span>, split.tries<span class="op">=</span><span class="fl">15</span>, card.min<span class="op">=</span><span class="st">"1%"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre>
-<p><img src="https://azureblue.github.io/cec/static/split_20_gaussians_spherical.png"></p>
+<p align="center">
+<img src="reference/figures/split_20_gaussians_all.png" alt=""></p>
+<p>However, using spherical densities (<code>type = 'spherical'</code>) on the same data set will lead to sub-optimal results:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">twenty.gaussians</span>, type <span class="op">=</span> <span class="st">"spherical"</span>, card.min<span class="op">=</span><span class="st">"1%"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p align="center">
+<img src="reference/figures/split_20_gaussians_spherical_bad.png" alt=""></p>
+<p>We can help the algorithm identify a more satisfying solution by playing with the <code>split.depth</code> and <code>split.tries</code> parameters, for instance.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cec</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cec.html">cec</a></span><span class="op">(</span><span class="va">twenty.gaussians</span>, type <span class="op">=</span> <span class="st">"spherical"</span>, card.min<span class="op">=</span><span class="st">"1%"</span>, </span>
+<span>    split.depth <span class="op">=</span> <span class="fl">25</span>, split.tries <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cec</span>, asp <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p align="center">
+<img src="reference/figures/split_20_gaussians_spherical_good.png" alt=""></p>
 </div>
 </div>
+<div class="footnotes footnotes-end-of-document">
+<hr>
+<ol>
+<li id="fn1"><p>Tabor, J., &amp; Spurek, P. (2014). Cross-entropy clustering. Pattern Recognition, 47(9), 3046–3059. <a href="https://doi.org/10.1016/j.patcog.2014.03.006" class="external-link uri">https://doi.org/10.1016/j.patcog.2014.03.006</a><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
