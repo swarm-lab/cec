@@ -15,6 +15,12 @@
 
 There were no ERRORs or WARNINGs.
 
+There was 1 NOTE:
+"Possibly misspelled words in DESCRIPTION:
+   Spurek (18:35)"
+   
+This is the correct spelling. 
+
 ## Downstream dependencies
 
 There are currently no downstream dependencies for this package.

@@ -12,10 +12,11 @@ Authors@R: c(
       comment = c(ORCID = "0000-0002-3886-3974"))
   )
 Maintainer: Simon Garnier <garnier@njit.edu>
-Description: Clustering that splits data into Gaussian type clusters. The 
-    implementation allows the simultaneous use of various type Gaussian mixture 
-    models, performs the reduction of unnecessary clusters and it's able to 
-    discover new groups. Based on Spurek, P. and Tabor, J. (2014) 
+Description: Splits data into Gaussian type clusters using the Cross-Entropy 
+    Clustering (CEC) method. This method allows for the simultaneous use of 
+    various type of Gaussian mixture models, for performing the reduction of 
+    unnecessary clusters, and for discovering new clusters by splitting them. 
+    CEC is based on the work of Spurek, P. and Tabor, J. (2014) 
     <doi:10.1016/j.patcog.2014.03.006>.
 ByteCompile: true
 URL: https://github.com/swarm-lab/cec,
