@@ -28,11 +28,11 @@ Recognition, 47(9), 3046–3059. https://doi.org/10.1016/j.patcog.2014.03.006
 install.packages("CEC")
 ```
 
-You can also use the [`remotes`]() package to install the development version of 
-[`CEC`](https://github.com/swarm-lab/cec) as follows: 
+You can also use the [`remotes`](https://remotes.r-lib.org/) package to install 
+the development version of [`CEC`](https://github.com/swarm-lab/cec) as follows: 
 
 ```R
-remotes::install_github()("swarm-lab/cec")
+remotes::install_github("swarm-lab/cec")
 ```
 
 ---
@@ -89,8 +89,8 @@ Like k-means, the quality of the results produced by CEC depends on the choice
 of initial cluster centers. The initial locations of the centers can be chosen 
 using the `centers.init` parameter of the `cec` function. It can be set to
 `"random"` to select the initial centers randomly, or to `"kmeans++"` to select 
-them via the [**k-means++** method](https://en.wikipedia.org/wiki/K-means%2B%2B).
-It is also recommended to run the clustering algorithm multiple times with 
+them via the [k-means++ method](https://en.wikipedia.org/wiki/K-means%2B%2B). It 
+is also recommended to run the clustering algorithm multiple times with 
 different cluster centers. This can easily be achieved using the `nstart` 
 parameter. For instance,
 
