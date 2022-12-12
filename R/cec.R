@@ -510,6 +510,6 @@ cec.interactive <- function(x,
         ignore <- readline(prompt = "Press <Enter>:")
     }
     
-    par(old.ask)
+    graphics::par(old.ask)
     Z
 }
