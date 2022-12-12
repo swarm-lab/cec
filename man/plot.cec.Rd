@@ -11,8 +11,9 @@
   pch = 19,
   cex.centers = 1,
   pch.centers = 8,
-  ellipses.lwd = 4,
   ellipses = TRUE,
+  ellipses.lwd = 4,
+  ellipses.lty = 2,
   model = TRUE,
   xlab,
   ylab,
@@ -40,10 +41,13 @@ centers' means.}
 \item{pch.centers}{The same as \code{pch}, except that it applies only to the 
 centers' means.}
 
+\item{ellipses}{If this parameter is TRUE, covariance ellipses will be drawn.}
+
 \item{ellipses.lwd}{The line width of the covariance ellipses. See \code{lwd}
 in \code{\link{par}} for more details.}
 
-\item{ellipses}{If this parameter is TRUE, covariance ellipses will be drawn.}
+\item{ellipses.lty}{The line type of the covariance ellipses. See \code{lty}
+in \code{\link{par}} for more details.}
 
 \item{model}{If this parameter is TRUE, the model (expected) covariance will
 be used for each cluster instead of the sample covariance (MLE) of the 

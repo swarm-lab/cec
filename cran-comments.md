@@ -35,6 +35,26 @@ There are currently no downstream dependencies for this package.
 
 ## CRAN team comments
 
+"Please always write package names, software names and API (application
+programming interface) names in single quotes in title and description.
+e.g: --> 'CEC'
+Please note that package names are case sensitive."
+
+Fixed.
+
+"Please do not use on.exit() to reset user's options(), working directory
+or par() after you changed it in examples and vignettes and demos. e.g.:
+man/cec.Rd
+Please reset in the following way
+e.g.:
+oldpar <- par(mfrow = c(1,2))
+...
+par(oldpar)"
+
+Fixed. 
+
+---
+
 The package appeared to have been "orphaned" and I am "adopting" it as new 
 maintainer. CRAN check errors were not corrected for months, there has not been 
 any activity on the package's GitHub repository in more than a year, and the 

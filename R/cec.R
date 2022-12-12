@@ -175,8 +175,6 @@
 #' m3[,2] <- m3[, 2] - 5
 #' m <- rbind(m1, m2, m3)
 #'
-#' oldpar <- graphics::par(ask = TRUE)
-#' on.exit(graphics::par(oldpar))
 #' plot(m, cex = 0.5, pch = 19)
 #'
 #' ## Clustering result:
@@ -452,8 +450,6 @@ cec.interactive <- function(x,
                             keep.removed = FALSE, 
                             readline = TRUE) {
     old.ask <- graphics::par()["ask"]
-    on.exit(graphics::par(old.ask))
-    
     n <- ncol(x)
     
     if (n != 2) {
@@ -514,5 +510,6 @@ cec.interactive <- function(x,
         ignore <- readline(prompt = "Press <Enter>:")
     }
     
+    par(old.ask)
     Z
 }

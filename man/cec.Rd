@@ -194,8 +194,6 @@ m3 <- matrix(rnorm(2000, mean = 3, sd = 1), ncol = 2)
 m3[,2] <- m3[, 2] - 5
 m <- rbind(m1, m2, m3)
 
-oldpar <- graphics::par(ask = TRUE)
-on.exit(graphics::par(oldpar))
 plot(m, cex = 0.5, pch = 19)
 
 ## Clustering result:

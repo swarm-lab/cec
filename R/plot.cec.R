@@ -24,11 +24,14 @@
 #' 
 #' @param pch.centers The same as \code{pch}, except that it applies only to the 
 #'  centers' means.
-#' 
+#'  
+#' @param ellipses If this parameter is TRUE, covariance ellipses will be drawn.
+#'
 #' @param ellipses.lwd The line width of the covariance ellipses. See \code{lwd}
 #'  in \code{\link{par}} for more details.
-#' 
-#' @param ellipses If this parameter is TRUE, covariance ellipses will be drawn.
+#'  
+#' @param ellipses.lty The line type of the covariance ellipses. See \code{lty}
+#'  in \code{\link{par}} for more details.
 #' 
 #' @param model If this parameter is TRUE, the model (expected) covariance will
 #'  be used for each cluster instead of the sample covariance (MLE) of the 
@@ -52,8 +55,8 @@
 #'
 #' @export
 plot.cec <- function(x, col, cex = 0.5, pch = 19, cex.centers = 1, 
-                     pch.centers = 8,  ellipses.lwd = 4, ellipses = TRUE, 
-                     model = TRUE, xlab, ylab, ...) {
+                     pch.centers = 8, ellipses = TRUE, ellipses.lwd = 4, 
+                     ellipses.lty = 2, model = TRUE, xlab, ylab, ...) {
     if (ncol(x$data) != 2) {
         stop("Plotting is available only for 2-dimensional data.")
     }
@@ -96,7 +99,7 @@ plot.cec <- function(x, col, cex = 0.5, pch = 19, cex.centers = 1,
                 tryCatch({
                     cov <- covs[[i]]
                     pts <- ellipse(means[i, ], cov)
-                    graphics::lines(pts, lwd = ellipses.lwd)
+                    graphics::lines(pts, lwd = ellipses.lwd, lty = ellipses.lty)
                 },
                 finally = {})
             }
