@@ -2,8 +2,8 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/swarm-lab/cec/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/swarm-lab/cec/actions/workflows/R-CMD-check.yaml)
-![CRAN](https://www.r-pkg.org/badges/version/CEC)
-![CRANLOGS](https://cranlogs.r-pkg.org/badges/CEC)
+[![CRAN status](https://www.r-pkg.org/badges/version/CEC)](https://CRAN.R-project.org/package=CEC)
+[![CRANLOGS downloads](https://cranlogs.r-pkg.org/badges/cec)](https://cran.r-project.org/package=cec)
 <!-- badges: end -->
 
 ## Description
