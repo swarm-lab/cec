@@ -7,7 +7,7 @@
 #'
 #' @param x A numeric matrix of data. Each row corresponds to a distinct
 #'  observation; each column corresponds to a distinct variable/dimension. It
-#'  must not contain \code{NA} values.
+#'  must not contain \code{NA} values. 
 #'
 #' @param centers Either a matrix of initial centers or the number of initial
 #'  centers (\code{k}, single number \code{cec(data, 4, ...)}) or a vector for
