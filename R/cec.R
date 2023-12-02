@@ -128,7 +128,7 @@
 #'  implementations of \emph{\strong{H}} have been proposed (expressed as a type
 #'  - model - of the clustering):
 #'
-#'  \itemize{
+#'  \describe{
 #'   \item{"all": }{All Gaussian densities. Data will form ellipsoids with
 #'   arbitrary radiuses.}
 #'   \item{"covariance": }{Gaussian densities with a fixed given covariance. The
