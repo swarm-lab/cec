@@ -1,3 +1,15 @@
+# CEC v0.11.1
+
+## New features
+
+* N/A. 
+
+## Minor improvements and fixes
+
+* Fixing new CRAN check errors. 
+
+---
+
 # CEC v0.11.0
 
 ## New features

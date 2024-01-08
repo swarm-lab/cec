@@ -1,7 +1,7 @@
 ## Test environments
 
-* local M1 OS X 13.0.1, R 4.2.2
-* local M1 OS X 13.0.1, R-devel
+* local M1 OS X 14.1.1, R 4.3.2
+* local M1 OS X 14.1.1, R-devel
 * Github Actions "windows-latest (release)"
 * Github Actions "macOS-latest (release)"
 * Github Actions "ubuntu-latest (release)"
@@ -10,62 +10,70 @@
 * r-hub Windows Server 2022, R-devel, 64 bit
 * r-hub Ubuntu Linux 20.04.1 LTS, R-release, GCC
 * r-hub Fedora Linux, R-devel, clang, gfortran
+* r-hub Debian Linux, R-devel, GCC ASAN/UBSAN
 * win-builder.r-project.org
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
 
-"Possibly misspelled words in DESCRIPTION:
-  CEC (16:17, 19:5)
-  Spurek (19:33)"
-   
-These are the correct spellings. 
-
-"Found the following (possibly) invalid URLs:
-      URL:
-        From: README.md
-        Message: Empty URL"
-
-Fixed. 
-
 ## Downstream dependencies
 
-There are currently no downstream dependencies for this package.
+Downstream dependencies on CRAN and Bioconductor were checked with ‘revdepcheck::revdep_check()’. We checked 1 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
 
 ## CRAN team comments
 
-"Please always write package names, software names and API (application
-programming interface) names in single quotes in title and description.
-e.g: --> 'CEC'
-Please note that package names are case sensitive."
+This submission fixes the following CRAN check issues:
 
-Fixed.
+Version: 0.11.0
+Check: whether package can be installed
+Result: WARN 
+  Found the following significant warnings:
+    cec_r.cpp:65:15: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:75:11: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:123:15: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:133:11: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:160:15: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:167:15: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+  See ‘/home/hornik/tmp/R.check/r-devel-clang/Work/PKGS/CEC.Rcheck/00install.out’ for details.
+  * used C++ compiler: ‘Debian clang version 17.0.5 (1)’
+Flavor: r-devel-linux-x86_64-debian-clang
 
-"Please do not use on.exit() to reset user's options(), working directory
-or par() after you changed it in examples and vignettes and demos. e.g.:
-man/cec.Rd
-Please reset in the following way
-e.g.:
-oldpar <- par(mfrow = c(1,2))
-...
-par(oldpar)"
+Version: 0.11.0
+Check: C++ specification
+Result: NOTE 
+    Specified C++11: please drop specification unless essential
+Flavors: r-devel-linux-x86_64-debian-clang, r-devel-linux-x86_64-debian-gcc, r-devel-linux-x86_64-fedora-clang, r-devel-linux-x86_64-fedora-gcc, r-devel-windows-x86_64, r-patched-linux-x86_64, r-release-linux-x86_64, r-release-macos-arm64, r-release-macos-x86_64, r-release-windows-x86_64
 
-Fixed. 
+Version: 0.11.0
+Check: Rd files
+Result: NOTE 
+  checkRd: (-1) cec.Rd:164-165: Lost braces in \itemize; meant \describe ?
+  checkRd: (-1) cec.Rd:166-168: Lost braces in \itemize; meant \describe ?
+  checkRd: (-1) cec.Rd:169-172: Lost braces in \itemize; meant \describe ?
+  checkRd: (-1) cec.Rd:173-175: Lost braces in \itemize; meant \describe ?
+  checkRd: (-1) cec.Rd:176-177: Lost braces in \itemize; meant \describe ?
+  checkRd: (-1) cec.Rd:178-180: Lost braces in \itemize; meant \describe ?
+  checkRd: (-1) cec.Rd:181-182: Lost braces in \itemize; meant \describe ?
+  checkRd: (-1) init.centers.Rd:19-20: Lost braces in \itemize; meant \describe ?
+  checkRd: (-1) init.centers.Rd:21-22: Lost braces in \itemize; meant \describe ?
+Flavors: r-devel-linux-x86_64-debian-clang, r-devel-linux-x86_64-debian-gcc
+
+Version: 0.11.0
+Check: whether package can be installed
+Result: WARN 
+  Found the following significant warnings:
+    cec_r.cpp:65:15: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:75:11: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:123:15: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:133:11: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:160:15: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+    cec_r.cpp:167:15: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+  See ‘/data/gannet/ripley/R/packages/tests-clang/CEC.Rcheck/00install.out’ for details.
+  * used C++ compiler: ‘clang version 17.0.5’
+Flavor: r-devel-linux-x86_64-fedora-clang
 
 ---
-
-The package appeared to have been "orphaned" and I am "adopting" it as new 
-maintainer. CRAN check errors were not corrected for months, there has not been 
-any activity on the package's GitHub repository in more than a year, and the 
-previous maintainer have not replied to my or others' messages to fix the check
-errors. 
-
-I have conserved the attribution structure of the package and just added myself 
-as the new maintainer. I have also fixed the check errors, updated the 
-documentation, and made code modifications that do not alter the usage of 
-user-facing functions or modify their output for maintaining continuity with the
-previous versions of the package on CRAN. 
-
-If this "adoption" is not acceptable for CRAN policies, please disregard this 
-submission. 

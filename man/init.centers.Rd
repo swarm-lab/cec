@@ -15,9 +15,8 @@ must not contain \code{NA} values.}
 
 \item{method}{A character string indicating the initialization method to use. 
 It can take the following values:
-\itemize{
- \item{"kmeans++": }{the centers are selected using the k-means++ algorithm.
-  }
+\describe{
+ \item{"kmeans++": }{the centers are selected using the k-means++ algorithm.}
  \item{"random": }{the centers are randomly selected among the values in
   \code{x}}
 }}

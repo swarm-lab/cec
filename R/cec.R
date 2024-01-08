@@ -7,7 +7,7 @@
 #'
 #' @param x A numeric matrix of data. Each row corresponds to a distinct
 #'  observation; each column corresponds to a distinct variable/dimension. It
-#'  must not contain \code{NA} values.
+#'  must not contain \code{NA} values. 
 #'
 #' @param centers Either a matrix of initial centers or the number of initial
 #'  centers (\code{k}, single number \code{cec(data, 4, ...)}) or a vector for
@@ -128,7 +128,7 @@
 #'  implementations of \emph{\strong{H}} have been proposed (expressed as a type
 #'  - model - of the clustering):
 #'
-#'  \itemize{
+#'  \describe{
 #'   \item{"all": }{All Gaussian densities. Data will form ellipsoids with
 #'   arbitrary radiuses.}
 #'   \item{"covariance": }{Gaussian densities with a fixed given covariance. The
