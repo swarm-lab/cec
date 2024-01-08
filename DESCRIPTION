@@ -2,7 +2,7 @@ Package: CEC
 Type: Package
 Title: Cross-Entropy Clustering
 Version: 0.11.1
-Date: 2023-11-30
+Date: 2024-01-08
 Authors@R: c(
     person("Kamieniecki", "Konrad", email = "konrad.kamieniecki@alumni.uj.edu.pl", 
       role = c("aut")),
