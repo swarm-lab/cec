@@ -2,6 +2,7 @@
 % Please edit documentation in R/CEC-package.R
 \docType{package}
 \name{CEC-package}
+\alias{CEC}
 \alias{CEC-package}
 \title{Cross-Entropy Clustering}
 \description{
@@ -18,6 +19,7 @@ CEC divides data into Gaussian type clusters. The implementation
 Konrad Kamieniecki
 }
 \keyword{cluster}
+\keyword{internal}
 \keyword{models}
 \keyword{multivariate}
 \keyword{package}

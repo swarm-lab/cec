@@ -16,7 +16,7 @@ namespace cec {
 
         template<>
         inline const char* get(SEXP sexp) {
-            if (!isString(sexp))
+            if (!Rf_isString(sexp))
                 throw invalid_parameter_type("string vector");
             return CHAR(STRING_ELT(sexp, 0));
         }
@@ -37,7 +37,7 @@ namespace cec {
 
         template<>
         inline r_ext_ptr<mat> get(SEXP sexp) {
-            if (!isMatrix(sexp))
+            if (!Rf_isMatrix(sexp))
                 throw invalid_parameter_type("matrix");
             int m = Rf_nrows(sexp);
             int n = Rf_ncols(sexp);
@@ -71,7 +71,7 @@ namespace cec {
 
             SEXP r_ma;
 
-            PROTECT(r_ma = allocMatrix(REALSXP, m, n));
+            PROTECT(r_ma = Rf_allocMatrix(REALSXP, m, n));
 
             double *r_data = REAL(r_ma);
             for (int i = 0; i < m; i++)
@@ -85,7 +85,7 @@ namespace cec {
 
         inline SEXP put(int val) {
             SEXP ve;
-            PROTECT(ve = allocVector(INTSXP, 1));
+            PROTECT(ve = Rf_allocVector(INTSXP, 1));
             INTEGER(ve)[0] = val;
             UNPROTECT(1);
 
@@ -94,7 +94,7 @@ namespace cec {
 
         inline SEXP put(double val) {
             SEXP ve;
-            PROTECT(ve = allocVector(REALSXP, 1));
+            PROTECT(ve = Rf_allocVector(REALSXP, 1));
             REAL(ve)[0] = val;
             UNPROTECT(1);
 
@@ -103,7 +103,7 @@ namespace cec {
 
         inline SEXP put(vector<int> val) {
             SEXP ve;
-            PROTECT(ve = allocVector(INTSXP, val.size()));
+            PROTECT(ve = Rf_allocVector(INTSXP, val.size()));
             std::copy(val.begin(), val.end(), INTEGER(ve));
             UNPROTECT(1);
 
@@ -137,14 +137,14 @@ namespace cec {
 
             SEXP get_named(SEXP list, const char *name) {
                 SEXP elementNames = GET_NAMES(list);
-                if (!isString(elementNames))
+                if (!Rf_isString(elementNames))
                     throw invalid_parameter_type("named elements");
                 int len = LENGTH(elementNames);
                 for (int i = 0; i < len; i++) {
                     if (strcmp(name, CHAR(STRING_ELT(elementNames, i))))
                         continue;
                     SEXP res = VECTOR_ELT(list, i);
-                    if (!res || isNull(res))
+                    if (!res || Rf_isNull(res))
                         break;
                     return res;
                 }

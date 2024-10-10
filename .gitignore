@@ -9,3 +9,4 @@ src/models/*.o
 src/models/*.so
 src/models/*.dll
 docs
+.vscode/settings.json

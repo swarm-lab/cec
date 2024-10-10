@@ -62,7 +62,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
     }
 
     if (ex_what)
-        error("%s", ex_what);
+        Rf_error("%s", ex_what);
 
     try {
         SEXP r_res;
@@ -72,7 +72,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
     } catch (std::exception &ex) {
         ex_what = ex.what();
     }
-    error("%s", ex_what);
+    Rf_error("%s", ex_what);
 }
 
 extern "C"
@@ -120,7 +120,7 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
     }
 
     if (ex_what)
-        error("%s", ex_what);
+        Rf_error("%s", ex_what);
 
     try {
         SEXP r_res;
@@ -130,7 +130,7 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
     } catch (std::exception &ex) {
         ex_what = ex.what();
     }
-    error("%s", ex_what);
+    Rf_error("%s", ex_what);
 }
 
 extern "C"
@@ -157,14 +157,14 @@ SEXP cec_init_centers_r(SEXP x_r, SEXP k_r, SEXP method_r) {
     }
 
     if (ex_what)
-        error("%s", ex_what);
+        Rf_error("%s", ex_what);
 
     try {
         SEXP r_res = put(*res);
         return r_res;
     } catch (exception &ex) {
         ex_what = ex.what();
-        error("%s", ex_what);
+        Rf_error("%s", ex_what);
     }
 }
 

@@ -17,7 +17,7 @@ SEXP cec::create_R_result(const clustering_results &out) {
     PROTECT(energy_vector = put(out.energy));
     PROTECT(clusters_number_vector = put(out.cluster_number));
     PROTECT(assignment_vector = put(out.assignment));
-    PROTECT(covariance_list = allocVector(VECSXP, k));
+    PROTECT(covariance_list = Rf_allocVector(VECSXP, k));
     PROTECT(iterations = put(out.iterations));
     PROTECT(centers_matrix = put(out.centers));
 
@@ -32,26 +32,26 @@ SEXP cec::create_R_result(const clustering_results &out) {
     }
 
     SEXP ret;
-    PROTECT(ret = allocList(6));
+    PROTECT(ret = Rf_allocList(6));
     SEXP ret_s = ret;
 
     SETCAR(ret, assignment_vector);
-    SET_TAG(ret, install("cluster"));
+    SET_TAG(ret, Rf_install("cluster"));
     ret = CDR(ret);
     SETCAR(ret, centers_matrix);
-    SET_TAG(ret, install("centers"));
+    SET_TAG(ret, Rf_install("centers"));
     ret = CDR(ret);
     SETCAR(ret, energy_vector);
-    SET_TAG(ret, install("energy"));
+    SET_TAG(ret, Rf_install("energy"));
     ret = CDR(ret);
     SETCAR(ret, clusters_number_vector);
-    SET_TAG(ret, install("nclusters"));
+    SET_TAG(ret, Rf_install("nclusters"));
     ret = CDR(ret);
     SETCAR(ret, covariance_list);
-    SET_TAG(ret, install("covariances"));
+    SET_TAG(ret, Rf_install("covariances"));
     ret = CDR(ret);
     SETCAR(ret, iterations);
-    SET_TAG(ret, install("iterations"));
+    SET_TAG(ret, Rf_install("iterations"));
 
     UNPROTECT(k + 7);
     return ret_s;

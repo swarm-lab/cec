@@ -1,7 +1,7 @@
 #ifndef CEC_COV_H
 #define CEC_COV_H
 
-#include "vec.h"
+#include "vec.h" 
 
 namespace cec {
 
