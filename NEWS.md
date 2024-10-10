@@ -1,3 +1,15 @@
+# CEC v0.11.2
+
+## New features
+
+* N/A. 
+
+## Minor improvements and fixes
+
+* Fixing CRAN NO_REMAP error with R > 4.5.0. 
+
+---
+
 # CEC v0.11.1
 
 ## New features

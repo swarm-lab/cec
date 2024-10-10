@@ -26,8 +26,8 @@
 #'  Possible values are: "covariance", "fixedr", "spherical", "diagonal",
 #'  "eigenvalues", "all" (default).
 #'
-#'  Currently, if the \code{centers} argument is a vector, only a single type can
-#'  be used.
+#'  Currently, if the \code{centers} argument is a vector, only a single type 
+#'  can be used.
 #'
 #' @param iter.max The maximum number of iterations of the clustering algorithm.
 #'
@@ -62,8 +62,8 @@
 #'  visible in the results as NA in the "centers" matrix (as well as the
 #'  corresponding values in the list of covariances).
 #'
-#' @param interactive If \code{TRUE}, the result of clustering will be plotted after
-#'  every iteration.
+#' @param interactive If \code{TRUE}, the result of clustering will be plotted 
+#'  after every iteration.
 #'
 #' @param threads The number of threads to use or "auto" to use the default
 #'  number of threads (usually the number of available processing units/cores)
@@ -344,7 +344,7 @@ cec <- function(x,
 
     card.min <- max(card.min, n + 1)
     k <- max(var.centers)
-    startTime <- proc.time()
+    # startTime <- proc.time()
 
     centers.r <- list(init.method = init.method.name,
                       var.centers = as.integer(var.centers),
@@ -378,7 +378,7 @@ cec <- function(x,
     }
 
     k.final <- nrow(Z$centers)
-    execution.time <- as.vector((proc.time() - startTime))[3]
+    # execution.time <- as.vector((proc.time() - startTime))[3]
     Z$centers[is.nan(Z$centers)] <- NA
     tab <- tabulate(Z$cluster)
     probability <- vapply(tab, function(c.card) {
@@ -427,7 +427,7 @@ cec <- function(x,
 
     structure(
         list(data = x, cluster = Z$cluster, centers = Z$centers, probability = probability, cost.function = Z$energy,
-             nclusters = Z$nclusters, iterations = Z$iterations, time = execution.time, covariances = Z$covariances,
+             nclusters = Z$nclusters, iterations = Z$iterations, covariances = Z$covariances,
              covariances.model = covariances.model, means.model = means.model),
         class = "cec")
 }

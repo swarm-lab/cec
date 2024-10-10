@@ -14,75 +14,10 @@
 #' 
 #' @seealso \code{\link{cec}}
 #' 
-#' @keywords package multivariate cluster models
+#' @keywords internal package multivariate cluster models
 #' 
-NULL
+"_PACKAGE"
 
-
-#' @title Four Gaussian Clusters
-#'
-#' @description Matrix of 2-dimensional points forming four Gaussian clusters.
-#'
-#' @name fourGaussians
-#' 
-#' @docType data
-#' 
-#' @keywords datasets
-#' 
-#' @examples
-#' data(fourGaussians)
-#' plot(fourGaussians, cex = 0.5, pch = 19);
-#'
-NULL
-
-
-#' @title Three Gaussian Clusters
-#'
-#' @description Matrix of 2-dimensional points forming three Gaussian clusters.
-#'
-#' @name threeGaussians
-#' 
-#' @docType data
-#' 
-#' @keywords datasets
-#' 
-#' @examples
-#' data(threeGaussians)
-#' plot(threeGaussians, cex = 0.5, pch = 19);
-#'
-NULL
-
-
-#' @title Mixed Shapes Clusters 
-#'
-#' @description Matrix of 2-dimensional points that form circular and elliptical 
-#'  patterns.
-#'
-#' @name mixShapes
-#' 
-#' @docType data
-#' 
-#' @keywords datasets
-#' 
-#' @examples
-#' data(mixShapes)
-#' plot(mixShapes, cex = 0.5, pch = 19);
-#'
-NULL
-
-
-#' @title T-Shaped Clusters
-#'
-#' @description Matrix of 2-dimensional points that form the letter T.
-#'
-#' @name Tset
-#' 
-#' @docType data
-#' 
-#' @keywords datasets
-#' 
-#' @examples
-#' data(Tset)
-#' plot(Tset, cex = 0.5, pch = 19);
-#'
+## usethis namespace: start
+## usethis namespace: end
 NULL

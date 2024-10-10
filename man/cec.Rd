@@ -47,8 +47,8 @@ must not contain \code{NA} values.}
  Possible values are: "covariance", "fixedr", "spherical", "diagonal",
  "eigenvalues", "all" (default).
 
- Currently, if the \code{centers} argument is a vector, only a single type can
- be used.}
+ Currently, if the \code{centers} argument is a vector, only a single type 
+ can be used.}
 
 \item{iter.max}{The maximum number of iterations of the clustering algorithm.}
 
@@ -83,8 +83,8 @@ with a percent sign (e.g. "5\%").}
 visible in the results as NA in the "centers" matrix (as well as the
 corresponding values in the list of covariances).}
 
-\item{interactive}{If \code{TRUE}, the result of clustering will be plotted after
-every iteration.}
+\item{interactive}{If \code{TRUE}, the result of clustering will be plotted 
+after every iteration.}
 
 \item{threads}{The number of threads to use or "auto" to use the default
  number of threads (usually the number of available processing units/cores)
