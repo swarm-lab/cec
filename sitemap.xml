@@ -1,51 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://swarm-lab.github.io/cec/404.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/index.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/CEC-package.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/Tset.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/cec.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/fourGaussians.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/init.centers.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/mixShapes.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/mouseset.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/plot.cec.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/print.cec.html</loc>
-  </url>
-  <url>
-    <loc>https://swarm-lab.github.io/cec/reference/threeGaussians.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://swarm-lab.github.io/cec/404.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/LICENSE-text.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/authors.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/index.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/news/index.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/CEC-package.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/Tset.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/cec.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/fourGaussians.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/index.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/init.centers.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/mixShapes.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/mouseset.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/plot.cec.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/print.cec.html</loc></url>
+<url><loc>https://swarm-lab.github.io/cec/reference/threeGaussians.html</loc></url>
 </urlset>
+
