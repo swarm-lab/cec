@@ -1,8 +1,8 @@
 Package: CEC
 Type: Package
 Title: Cross-Entropy Clustering
-Version: 0.11.2
-Date: 2024-10-10
+Version: 0.11.3
+Date: 2026-02-03
 Authors@R: c(
     person("Kamieniecki", "Konrad", email = "konrad.kamieniecki@alumni.uj.edu.pl", 
       role = c("aut")),
@@ -30,6 +30,6 @@ Imports:
     utils
 NeedsCompilation: yes
 License: GPL-3
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
     covr
