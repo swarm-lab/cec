@@ -1,3 +1,15 @@
+# CEC v0.11.3
+
+## New features
+
+* N/A. 
+
+## Minor improvements and fixes
+
+* Fixing typo in Makevars.
+
+---
+
 # CEC v0.11.2
 
 ## New features
