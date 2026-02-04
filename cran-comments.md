@@ -28,4 +28,15 @@ comparing R CMD check results across CRAN and dev versions of this package.
 
 ## CRAN team comments
 
-N/A
+Checks returns the following: 
+
+* Possibly misspelled words in DESCRIPTION:
+  Spurek (19:35)
+
+This is the correct spelling of that person's last name. 
+
+* CRAN repository db overrides:
+  X-CRAN-Comment: Archived on 2026-01-15 as issues were not addressed
+    in time.
+
+This submission fix the issues previously reported. 
