@@ -120,6 +120,62 @@ test.invalid.weights.inf <- function() {
     CEC:::checkTrue(inherits(caught, "error"), "Inf weight should error")
 }
 
+# 9.4b Validation guards for non-weight parameters
+test.invalid.fixedr.negative.radius <- function() {
+    caught <- tryCatch(
+        cec(data_mat, 1, type = "fixedr", param = -1),
+        error = function(e) e
+    )
+    CEC:::checkTrue(inherits(caught, "error"), "negative fixedr radius should error")
+}
+
+test.invalid.eigenvalues.negative <- function() {
+    caught <- tryCatch(
+        cec(data_mat, 1, type = "eigenvalues", param = c(-0.5, 0.1)),
+        error = function(e) e
+    )
+    CEC:::checkTrue(inherits(caught, "error"), "negative eigenvalue should error")
+}
+
+# 9.4c All 7 model types work with non-uniform weights (smoke test)
+test.all.model.types.with.weights <- function() {
+    w <- c(rep(2, 10), rep(1, 10))
+    models <- list(
+        list(type = "all"),
+        list(type = "spherical"),
+        list(type = "diagonal"),
+        list(type = "fixedr",      param = 0.5),
+        list(type = "eigenvalues", param = c(0.1, 0.2)),
+        list(type = "covariance",  param = matrix(c(1, 0, 0, 1), 2, 2))
+    )
+    for (m in models) {
+        if (is.null(m$param)) {
+            Z <- cec(data_mat, init_centers, type = m$type, weights = w, nstart = 1)
+        } else {
+            Z <- cec(data_mat, init_centers, type = m$type, param = m$param, weights = w, nstart = 1)
+        }
+        CEC:::checkTrue(!is.null(Z), paste("model", m$type, "returns non-null"))
+        CEC:::checkNumericEquals(1.0, sum(Z$probability),
+                                 msg = paste("model", m$type, "probability sums to 1"))
+    }
+    # mean model: use a single center — with two fixed-mean clusters both far from the
+    # fixed point, CEC removes all clusters; one center is always retained
+    Z <- cec(data_mat, 1, type = "mean", param = colMeans(data_mat), weights = w, nstart = 1)
+    CEC:::checkTrue(!is.null(Z), "model mean returns non-null")
+    CEC:::checkNumericEquals(1.0, sum(Z$probability), msg = "model mean probability sums to 1")
+}
+
+# 9.4d card.min below n+1 triggers a warning
+test.card.min.warning.fires <- function() {
+    caught <- tryCatch(
+        cec(data_mat, init_centers, card.min = 1, nstart = 1),
+        warning = function(w) w
+    )
+    CEC:::checkTrue(inherits(caught, "warning"), "card.min below n+1 should warn")
+    CEC:::checkTrue(grepl("card.min", conditionMessage(caught)),
+                    "warning message should mention card.min")
+}
+
 # 9.5 card.min: a cluster with tiny weight sum is removed even when it has enough observations
 test.card.min.weight.sum.semantics <- function() {
     # 18 heavy points in cluster1 region, 2 near-zero-weight points in cluster2 region
@@ -153,10 +209,11 @@ test.probability.matches.weighted.proportion <- function() {
     }
 }
 
-# 9.7 Split mode smoke test with weights
+# 9.7 Split mode with non-uniform weights finds the correct structure
 test.split.mode.with.weights <- function() {
-    w <- rep(1, nrow(data_mat))
+    w <- c(rep(2, 10), rep(1, 10))
     Z <- cec(data_mat, 1, split = TRUE, weights = w)
-    CEC:::checkTrue(!is.null(Z), "split mode with weights returns non-null")
-    CEC:::checkTrue(Z$nclusters >= 1, "split mode returns at least one cluster")
+    CEC:::checkEquals(2L, Z$nclusters, "split mode with weights finds 2 clusters")
+    CEC:::checkNumericEquals(1.0, sum(Z$probability),
+                             msg = "split mode probability sums to 1")
 }
