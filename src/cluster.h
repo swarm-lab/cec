@@ -77,7 +77,7 @@ namespace cec {
             eng = tmp_eng;
         }
 
-        double energy() {
+        double energy() const {
             return mod.energy(cov, total_weight);
         }
 

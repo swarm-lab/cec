@@ -107,6 +107,8 @@ namespace cec {
                     return current_res;
                 }
 
+                moved.resize(k_s, true);
+
                 for (int i = 0; i < x.m; i++) {
                     if (cluster[i] != current_res->assignment[i]) {
                         moved[cluster[i]] = true;

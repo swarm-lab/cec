@@ -1,7 +1,6 @@
 #ifndef CEC_COV_H
 #define CEC_COV_H
 
-#include <cassert>
 #include "vec.h"
 #include "common.h"
 
@@ -115,7 +114,10 @@ namespace cec {
         void rem_point(const row &point, double w) {
             double W = mn.weight_sum();
             double W_n = W - w;
-            assert(W_n > 0.0);
+            if (W_n <= 0.0) {
+                fill(m::QNAN);
+                return;
+            }
             cov_change(point, W / W_n, -W * w / (W_n * W_n), *this);
             mn.rem_point(point, w);
             mn.update();
