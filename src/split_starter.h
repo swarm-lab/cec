@@ -46,7 +46,7 @@ namespace cec {
         int max_k;
         int max_depth;
         vector<unique_ptr<model>> try_split_models;
-        unique_ptr<clustering_results> try_split_cluster(const mat &x_mat);
+        unique_ptr<clustering_results> try_split_cluster(const mat &x_mat, const vector<double> &weights);
     };
 }
 

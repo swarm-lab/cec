@@ -24,7 +24,8 @@ static void seed_from_r() {
 }
 
 extern "C"
-SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_param_r) {
+SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_param_r,
+           SEXP weights_r) {
     seed_from_r();
     const char *ex_what = nullptr;
     r_ext_ptr<clustering_results> start_results;
@@ -35,6 +36,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
         r_ext_ptr<centers_param> centers_par = get_centers_param(centers_param_r);
         r_ext_ptr<control_param> control_par = get_control_param(control_param_r);
         r_ext_ptr<models_param> models_par = get_models_param(models_param_r, n);
+        auto weights_vec = get<r_ext_ptr<vector<double>>>(weights_r);
 
         const shared_ptr<centers_init_spec> &centers_init_ptr = centers_par->get_centers_init();
         const centers_init_spec &init_spec = *centers_init_ptr;
@@ -44,7 +46,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
         parallel_starter ps(control_par->threads, control_par->starts);
 
         auto cl_function = [&](const mat &x, const vector<shared_ptr<model_spec>> &specs) {
-            multiple_starts_task task(starter_params, x, specs);
+            multiple_starts_task task(starter_params, x, specs, *weights_vec);
             return ps.start(task);
         };
 
@@ -77,7 +79,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
 
 extern "C"
 SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_param_r,
-                 SEXP split_param_r) {
+                 SEXP split_param_r, SEXP weights_r) {
     seed_from_r();
     const char *ex_what = nullptr;
     r_ext_ptr<clustering_results> start_results;
@@ -89,6 +91,7 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
         r_ext_ptr<control_param> control_par = get_control_param(control_param_r);
         r_ext_ptr<models_param> models_par = get_models_param(models_param_r, n);
         r_ext_ptr<split_param> split_par = get_split_param(split_param_r);
+        auto weights_vec = get<r_ext_ptr<vector<double>>>(weights_r);
 
         const shared_ptr<centers_init_spec> &centers_init_ptr = centers_par->get_centers_init();
         const centers_init_spec &init_spec = *centers_init_ptr;
@@ -105,7 +108,7 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
         parallel_starter ps(control_par->threads, control_par->starts);
 
         auto cl_function = [&](const mat &x, const vector<shared_ptr<model_spec>> &specs) {
-            start_and_split_task task(initial_cl_params, split_params, x, specs);
+            start_and_split_task task(initial_cl_params, split_params, x, specs, *weights_vec);
             return ps.start(task);
         };
 
@@ -169,8 +172,8 @@ SEXP cec_init_centers_r(SEXP x_r, SEXP k_r, SEXP method_r) {
 }
 
 R_CallMethodDef methods[] = {
-        {"cec_r",              (DL_FUNC) &cec_r,              4},
-        {"cec_split_r",        (DL_FUNC) &cec_split_r,        5},
+        {"cec_r",              (DL_FUNC) &cec_r,              5},
+        {"cec_split_r",        (DL_FUNC) &cec_split_r,        6},
         {"cec_init_centers_r", (DL_FUNC) &cec_init_centers_r, 3},
         {NULL, NULL,                                          0}
 };

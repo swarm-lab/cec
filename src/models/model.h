@@ -14,8 +14,8 @@ namespace cec {
 
         virtual double cross_entropy(const covariance &cov) const noexcept = 0;
 
-        inline double energy(const covariance &cov, int m) const noexcept {
-            double p = cov.card() / (double) m;
+        inline double energy(const covariance &cov, double total_weight) const noexcept {
+            double p = cov.weight_sum() / total_weight;
             return p * (-m::log(p) + cross_entropy(cov));
         }
     };

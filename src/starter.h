@@ -11,12 +11,12 @@ namespace cec {
     class clustering_results;
 
     struct cec_parameters {
-        cec_parameters(int max_iter, int min_card)
+        cec_parameters(int max_iter, double min_card)
                 : max_iter(max_iter),
                   min_card(min_card) {}
 
         int max_iter;
-        int min_card;
+        double min_card;
     };
 
     class points_split {
@@ -47,7 +47,8 @@ namespace cec {
 
         unique_ptr<clustering_results>
         start(const mat &x, const vector<int> &initial_assignment,
-              const vector<unique_ptr<model>> &models);
+              const vector<unique_ptr<model>> &models,
+              const vector<double> &weights);
 
     private:
         cec_parameters params;

@@ -3,16 +3,17 @@
 
 namespace cec {
     unique_ptr<clustering_results>
-    split_starter::try_split_cluster(const mat &x_mat) {
+    split_starter::try_split_cluster(const mat &x_mat, const vector<double> &weights) {
         try {
             const unique_ptr<clustering_results> &single_res
                     = cec.start(x_mat, vector<int>(x_mat.m, 0),
-                                model_spec::create_models(m_spec));
+                                model_spec::create_models(m_spec), weights);
 
             if (!single_res)
                 return unique_ptr<clustering_results>();
 
-            unique_ptr<clustering_results> split_res = splitter.start(clustering_input(x_mat, try_split_models));
+            unique_ptr<clustering_results> split_res = splitter.start(
+                    clustering_input(x_mat, try_split_models, weights));
 
             if (split_res && split_res->cluster_number == 2 &&
                 split_res->energy < single_res->energy)
@@ -32,6 +33,7 @@ namespace cec {
             return make_unique<clustering_results>(*cl_res);
 
         const mat &x = input_params.x;
+        const vector<double> &weights = input_params.weights;
         int n = x.n;
         int k = cl_res->centers.m;
         vector<int> cluster(x.m);
@@ -59,9 +61,13 @@ namespace cec {
 
                 const mat &split_x_mat = split[i].points();
                 const vector<int> mapping = split[i].mapping();
+                vector<double> split_weights(split_x_mat.m);
+                for (int p = 0; p < split_x_mat.m; p++)
+                    split_weights[p] = weights[mapping[p]];
+
                 vector<int> split_assignment(split_x_mat.m);
                 if (moved[i]) {
-                    auto const &split_res = try_split_cluster(split_x_mat);
+                    auto const &split_res = try_split_cluster(split_x_mat, split_weights);
                     if (split_res) {
                         split_success = true;
                         split_res_c_mat = split_res->centers;
@@ -95,7 +101,8 @@ namespace cec {
             bool need_another_split = false;
             if (split_flag) {
                 try {
-                    current_res = cec.start(x, cluster, model_spec::create_models(m_spec, k_s));
+                    current_res = cec.start(x, cluster,
+                                            model_spec::create_models(m_spec, k_s), weights);
                 } catch (clustering_exception &ce) {
                     return current_res;
                 }

@@ -45,10 +45,10 @@ namespace cec {
     public:
         int starts;
         int max_iter;
-        int min_card;
+        double min_card;
         int threads;
 
-        control_param(int starts, int max_iter, int min_card, int threads)
+        control_param(int starts, int max_iter, double min_card, int threads)
                 : starts(starts),
                   max_iter(max_iter),
                   min_card(min_card),

@@ -9,11 +9,14 @@ namespace cec {
     struct clustering_input {
         const mat &x;
         const vector<unique_ptr<model>> &models;
+        const vector<double> &weights;
 
     public:
-        clustering_input(const mat &x, const vector<unique_ptr<model>> &models)
+        clustering_input(const mat &x, const vector<unique_ptr<model>> &models,
+                         const vector<double> &weights)
                 : x(x),
-                  models(models) {}
+                  models(models),
+                  weights(weights) {}
     };
 
     class best_results_collector {

@@ -5,24 +5,36 @@
 
 std::unique_ptr<cec::clustering_results>
 cec::cross_entropy_clustering::start(const mat &x, const vector<int> &initial_assignment,
-                        const vector<unique_ptr<model>> &models) {
+                        const vector<unique_ptr<model>> &models,
+                        const vector<double> &weights) {
 
     int m = x.m;
     int k = models.size();
     int n = x.n;
-    int min_card = params.min_card;
+    double min_card = params.min_card;
     int max_iter = params.max_iter;
     vector<int> assignment = initial_assignment;
     double energy_sum = 0;
+
+    double W_total = 0.0;
+    for (int i = 0; i < m; i++) W_total += weights[i];
 
     vector<unique_ptr<cluster>> clusters(k);
     vector<points_split> split = points_split::split_points(x, assignment, k);
 
     for (int i = 0; i < k; i++) {
         const mat &cluster_split = split[i].points();
-        if (cluster_split.m >= min_card) {
-            covariance cov = covariance::estimate(cluster_split);
-            clusters[i].reset(new cluster(*models[i], cov, m));
+        const vector<int> &mapping = split[i].mapping();
+        vector<double> cluster_weights(cluster_split.m);
+        for (int j = 0; j < cluster_split.m; j++)
+            cluster_weights[j] = weights[mapping[j]];
+
+        double W_k = 0.0;
+        for (double w : cluster_weights) W_k += w;
+
+        if (W_k >= min_card) {
+            covariance cov = covariance::estimate(cluster_split, cluster_weights);
+            clusters[i].reset(new cluster(*models[i], cov, W_total));
         }
     }
 
@@ -53,11 +65,12 @@ cec::cross_entropy_clustering::start(const mat &x, const vector<int> &initial_as
         for (int i = 0; i < m; i++) {
             const int cl_num = assignment[i];
             unique_ptr<cluster> &cl_src = clusters[cl_num];
+            double w_i = weights[i];
 
             if (handle_removed_flag && cl_src)
                 continue;
 
-            double rem_energy_gain = cl_src ? cl_src->rem_point(x[i]) : 0;
+            double rem_energy_gain = cl_src ? cl_src->rem_point(x[i], w_i) : 0;
             double best_gain = cl_src ? 0 : m::INF;
 
             if (m::isnan(rem_energy_gain))
@@ -70,7 +83,7 @@ cec::cross_entropy_clustering::start(const mat &x, const vector<int> &initial_as
                     continue;
 
                 cluster &cl_dst = *clusters[j];
-                double add_energy_gain = cl_dst.add_point(x[i]);
+                double add_energy_gain = cl_dst.add_point(x[i], w_i);
 
                 if (m::isnan(add_energy_gain))
                     throw invalid_covariance(cl_dst.covariance());
@@ -88,7 +101,7 @@ cec::cross_entropy_clustering::start(const mat &x, const vector<int> &initial_as
                 clusters[dst_cl_num]->apply_change();
                 if (cl_src) {
                     cl_src->apply_change();
-                    if (cl_src->card() < min_card) {
+                    if (cl_src->weight_sum() < min_card) {
                         removed_last_iteration_flag = true;
                         energy_sum -= cl_src->energy();
                         clusters[cl_num].reset(nullptr);

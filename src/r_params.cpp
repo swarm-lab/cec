@@ -16,7 +16,7 @@ namespace cec {
             return make_r_ext<control_param>(
                     r_par["starts"].get<int>(),
                     r_par["max.iters"].get<int>(),
-                    r_par["min.card"].get<int>(),
+                    r_par["min.card"].get<double>(),
                     r_par["threads"].get<int>()
             );
         }

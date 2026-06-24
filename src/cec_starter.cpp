@@ -4,10 +4,11 @@ namespace cec {
     unique_ptr<clustering_results> cec_starter::start(const clustering_input &ip) {
         const mat &x = ip.x;
         const vector<unique_ptr<model>> &models = ip.models;
+        const vector<double> &weights = ip.weights;
         int k = models.size();
         best.reset();
         for (int i = 0; i < starts; i++)
-            best(cec.start(x, closest.init(x, init->init(x, k)), models));
+            best(cec.start(x, closest.init(x, init->init(x, k)), models, weights));
         return best();
     }
 }
