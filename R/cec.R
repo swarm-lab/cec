@@ -260,7 +260,7 @@ cec <- function(x,
     }
 
     if (iter.max < 0)
-        stop("Illegal argument: iter.max must be greater than 0.")
+        stop("Illegal argument: iter.max must be non-negative.")
 
     if (!is.matrix(x))
         stop("Illegal argument: 'x' must be a matrix.")
