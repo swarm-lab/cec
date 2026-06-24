@@ -27,14 +27,14 @@ namespace cec {
         static mat inv(const mat &cov) {
             mat dst(cov);
             if (!invert(cov, dst))
-                throw new invalid_model_parameter("invalid covariance (not positive definite)");
+                throw invalid_model_parameter("invalid covariance (not positive definite)");
             return dst;
         }
 
         static double det(const mat &cov) {
             double det = determinant_calculator(cov.n).determinant(cov);
             if (std::isnan(det))
-                throw new invalid_model_parameter("invalid covariance (not positive definite)");
+                throw invalid_model_parameter("invalid covariance (not positive definite)");
             return det;
         }
     };
