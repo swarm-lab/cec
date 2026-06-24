@@ -377,7 +377,14 @@ cec <- function(x,
         card.min <- as.double(card.min)
     }
 
-    card.min <- max(card.min, n + 1)
+    enforced.min <- n + 1
+    if (card.min < enforced.min) {
+        warning(sprintf(
+            "'card.min' was raised to %g (must be > n = %d for numerical stability).",
+            enforced.min, n
+        ))
+        card.min <- enforced.min
+    }
     k <- max(var.centers)
     # startTime <- proc.time()
 
@@ -433,9 +440,7 @@ cec <- function(x,
                 }
             }
 
-            Z$cluster <- as.integer(vapply(Z$cluster, function(asgn) {
-                as.integer(cluster.map[asgn])
-            }, 0))
+            Z$cluster <- cluster.map[Z$cluster]
 
             Z$centers <- matrix(Z$centers[-na.rows, ], , n)
             Z$covariances <- Z$covariances[-na.rows]
@@ -453,7 +458,7 @@ cec <- function(x,
         models.r <- rep(list(model.one), covs)
     }
 
-    for (i in 1:covs) {
+    for (i in seq_len(covs)) {
         covariances.model[[i]] <- model.covariance(models.r[[i]]$type, Z$covariances[[i]],
                                                    Z$centers[i, ], models.r[[i]]$params)
         means.model[i, ] <- model.mean(models.r[[i]]$type, Z$centers[i, ], models.r[[i]]$params)
@@ -540,7 +545,7 @@ cec.interactive <- function(x,
         i <- i + 1
     }
     
-    plot(Z, ellipses = "TRUE")
+    plot(Z, ellipses = TRUE)
     
     if (readline) {
         ignore <- readline(prompt = "Press <Enter>:")
