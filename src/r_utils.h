@@ -64,6 +64,8 @@ namespace cec {
             return make_r_ext<vector<int>>(INTEGER(sexp), INTEGER(sexp) + LENGTH(sexp));
         }
 
+        // Each put() returns an unprotected SEXP. Caller must PROTECT immediately
+        // before any allocation to prevent GC collecting the returned object.
         inline SEXP put(const mat &ma) {
             int m = ma.m;
             int n = ma.n;

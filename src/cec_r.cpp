@@ -9,6 +9,8 @@
 #include "cec_r.h"
 
 #include<R_ext/Random.h>
+#include <cstdint>
+#include <string>
 
 using namespace cec;
 using namespace cec::r;
@@ -18,7 +20,7 @@ static void seed_from_r() {
     GetRNGstate();
     double r = unif_rand();
     PutRNGstate();
-    unsigned long seed;
+    uint64_t seed;
     memcpy(&seed, &r, sizeof(seed));
     random::set_seed(seed);
 }
@@ -27,7 +29,7 @@ extern "C"
 SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_param_r,
            SEXP weights_r) {
     seed_from_r();
-    const char *ex_what = nullptr;
+    std::string ex_message;
     r_ext_ptr<clustering_results> start_results;
     try {
         auto x = get<r_ext_ptr<mat>>(x_r);
@@ -59,29 +61,29 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
 
         start_results.reset(results.release());
 
-    } catch (exception &ex) {
-        ex_what = ex.what();
+    } catch (const exception &ex) {
+        ex_message = ex.what();
     }
 
-    if (ex_what)
-        Rf_error("%s", ex_what);
+    if (!ex_message.empty())
+        Rf_error("%s", ex_message.c_str());
 
     try {
         SEXP r_res;
         PROTECT(r_res = create_R_result(*start_results));
         UNPROTECT(1);
         return r_res;
-    } catch (std::exception &ex) {
-        ex_what = ex.what();
+    } catch (const std::exception &ex) {
+        ex_message = ex.what();
     }
-    Rf_error("%s", ex_what);
+    Rf_error("%s", ex_message.c_str());
 }
 
 extern "C"
 SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_param_r,
                  SEXP split_param_r, SEXP weights_r) {
     seed_from_r();
-    const char *ex_what = nullptr;
+    std::string ex_message;
     r_ext_ptr<clustering_results> start_results;
     try {
         auto x = get<r_ext_ptr<mat>>(x_r);
@@ -116,30 +118,33 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
 
         unique_ptr<clustering_results> results = var_start.start(*x, models_par->specs);
 
+        if (!results)
+            throw clustering_exception("all starts failed");
+
         start_results.reset(results.release());
 
-    } catch (exception &ex) {
-        ex_what = ex.what();
+    } catch (const exception &ex) {
+        ex_message = ex.what();
     }
 
-    if (ex_what)
-        Rf_error("%s", ex_what);
+    if (!ex_message.empty())
+        Rf_error("%s", ex_message.c_str());
 
     try {
         SEXP r_res;
         PROTECT(r_res = create_R_result(*start_results));
         UNPROTECT(1);
         return r_res;
-    } catch (std::exception &ex) {
-        ex_what = ex.what();
+    } catch (const std::exception &ex) {
+        ex_message = ex.what();
     }
-    Rf_error("%s", ex_what);
+    Rf_error("%s", ex_message.c_str());
 }
 
 extern "C"
 SEXP cec_init_centers_r(SEXP x_r, SEXP k_r, SEXP method_r) {
     seed_from_r();
-    const char *ex_what = nullptr;
+    std::string ex_message;
     r_ext_ptr<mat> res;
     try {
         auto x = get<r_ext_ptr<mat>>(x_r);
@@ -155,20 +160,20 @@ SEXP cec_init_centers_r(SEXP x_r, SEXP k_r, SEXP method_r) {
             default:
                 throw invalid_init_method("invalid init method");
         }
-    } catch (exception &ex) {
-        ex_what = ex.what();
+    } catch (const exception &ex) {
+        ex_message = ex.what();
     }
 
-    if (ex_what)
-        Rf_error("%s", ex_what);
+    if (!ex_message.empty())
+        Rf_error("%s", ex_message.c_str());
 
     try {
         SEXP r_res = put(*res);
         return r_res;
-    } catch (exception &ex) {
-        ex_what = ex.what();
-        Rf_error("%s", ex_what);
+    } catch (const exception &ex) {
+        ex_message = ex.what();
     }
+    Rf_error("%s", ex_message.c_str());
 }
 
 R_CallMethodDef methods[] = {
@@ -181,5 +186,5 @@ R_CallMethodDef methods[] = {
 extern "C"
 void R_init_CEC(DllInfo *dllInfo) {
     R_registerRoutines(dllInfo, NULL, methods, NULL, NULL);
-    R_useDynamicSymbols(dllInfo, TRUE);
+    R_useDynamicSymbols(dllInfo, FALSE);
 }

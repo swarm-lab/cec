@@ -55,7 +55,10 @@ namespace cec {
                     case model_type::MEAN: {
                         auto mean = params_r["mean"].get<r_ext_ptr<vector<double>>>();
                         specs->push_back(make_shared<model_mean_spec>(n, *mean));
+                        break;
                     }
+                    default:
+                        throw invalid_parameter_type("unknown model type");
                 }
             }
             return make_r_ext<models_param>(std::move(*specs));
