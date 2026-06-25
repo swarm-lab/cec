@@ -1,14 +1,14 @@
 Package: CEC
 Type: Package
 Title: Cross-Entropy Clustering
-Version: 0.11.3
-Date: 2026-02-03
+Version: 0.12.0
+Date: 2026-06-24
 Authors@R: c(
-    person("Kamieniecki", "Konrad", email = "konrad.kamieniecki@alumni.uj.edu.pl", 
-      role = c("aut")),
-    person("Spurek", "Przemyslaw", email = "przemyslaw.spurek@gmail.com", 
+    person("Kamieniecki", "Konrad", email = "konrad.kamieniecki@alumni.uj.edu.pl",
+      role = c("aut", "cph")),
+    person("Spurek", "Przemyslaw", email = "przemyslaw.spurek@gmail.com",
       role = c("ctb")),
-      person("Simon", "Garnier", email = "garnier@njit.edu", role = c("cre", "ctb"),
+      person("Simon", "Garnier", email = "garnier@njit.edu", role = c("cre", "ctb", "cph"),
       comment = c(ORCID = "0000-0002-3886-3974"))
   )
 Maintainer: Simon Garnier <garnier@njit.edu>
