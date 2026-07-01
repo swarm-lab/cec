@@ -114,7 +114,12 @@ namespace cec {
         void rem_point(const row &point, double w) {
             double W = mn.weight_sum();
             double W_n = W - w;
-            if (W_n <= 0.0) {
+            // W is accumulated incrementally across many add_point/rem_point
+            // calls, so a "last point in the cluster" removal can leave a
+            // tiny positive residual instead of an exact zero. A relative
+            // tolerance catches that residual without misclassifying a
+            // genuinely small remaining weight.
+            if (W_n <= W * 1e-9) {
                 fill(m::QNAN);
                 return;
             }

@@ -72,6 +72,18 @@ test.unit.weights.identical.to.null <- function() {
     CEC:::checkNumericEquals(Z1$cost.function, Z2$cost.function, msg = "cost")
 }
 
+# 9.3b integer-typed weights (is.numeric(1L) == TRUE) must be accepted, not just doubles
+test.integer.weights.accepted <- function() {
+    set.seed(1)
+    Z1 <- cec(data_mat, init_centers, weights = rep(1, nrow(data_mat)))
+    set.seed(1)
+    Z2 <- cec(data_mat, init_centers, weights = rep(1L, nrow(data_mat)))
+
+    CEC:::checkNumericVectorEquals(Z1$cluster, Z2$cluster, msg = "cluster assignments")
+    CEC:::checkNumericMatrixEquals(Z1$centers, Z2$centers, msg = "centers")
+    CEC:::checkNumericEquals(Z1$cost.function, Z2$cost.function, msg = "cost")
+}
+
 # 9.4 Invalid weights inputs each produce an error
 test.invalid.weights.wrong.length <- function() {
     caught <- tryCatch(
@@ -188,6 +200,24 @@ test.card.min.weight.sum.semantics <- function() {
     # With weight-sum card.min the near-zero cluster should be absorbed or removed
     Z <- cec(x_test, 2, weights = w, card.min = "5%", nstart = 1)
     CEC:::checkTrue(Z$nclusters <= 2, "near-zero cluster removed or merged")
+}
+
+# 9.5b card.min: a single heavily-weighted point must not survive as its own cluster.
+# A lone point trivially clears any weight-sum threshold but cannot produce a
+# non-singular covariance (needs >= n+1 observations). Regression test for a bug
+# where a skewed-weight outlier passed the weight-sum card.min gate with only one
+# observation and crashed the algorithm instead of being removed like a uniform-weight
+# lone point is.
+test.card.min.rejects.single.heavy.point.cluster <- function() {
+    main <- data_mat[1:10, ]
+    outlier <- matrix(c(50, 50), nrow = 1, ncol = 2)
+    x_test <- rbind(main, outlier)
+    w <- c(rep(1, 10), 1e6)
+    init <- matrix(c(0, 0, 50, 50), nrow = 2, byrow = TRUE)
+
+    Z <- suppressWarnings(cec(x_test, init, weights = w, card.min = 1, nstart = 1))
+    CEC:::checkTrue(!is.null(Z), "clustering completes instead of erroring")
+    CEC:::checkEquals(1L, Z$nclusters, "single heavy-weight outlier cluster is removed")
 }
 
 # 9.6 probability: sums to 1 and matches W_k / W_total under non-uniform weights

@@ -32,7 +32,7 @@ cec::cross_entropy_clustering::start(const mat &x, const vector<int> &initial_as
         double W_k = 0.0;
         for (double w : cluster_weights) W_k += w;
 
-        if (W_k >= min_card) {
+        if (W_k >= min_card && cluster_split.m >= n + 1) {
             covariance cov = covariance::estimate(cluster_split, cluster_weights);
             clusters[i].reset(new cluster(*models[i], cov, W_total));
         }
@@ -101,7 +101,7 @@ cec::cross_entropy_clustering::start(const mat &x, const vector<int> &initial_as
                 clusters[dst_cl_num]->apply_change();
                 if (cl_src) {
                     cl_src->apply_change();
-                    if (cl_src->weight_sum() < min_card) {
+                    if (cl_src->weight_sum() < min_card || cl_src->card() < n + 1) {
                         removed_last_iteration_flag = true;
                         energy_sum -= cl_src->energy();
                         clusters[cl_num].reset(nullptr);

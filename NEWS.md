@@ -15,6 +15,19 @@
 * When `weights` is non-uniform, `card.min` is now interpreted as a minimum
   weight sum rather than a minimum observation count.
 
+## Minor improvements and fixes
+
+* Fixed a crash with non-uniform `weights`: a cluster with fewer observations
+  than dimensions could pass the weight-sum-based `card.min` check and produce
+  a singular covariance. Cluster removal now also enforces a minimum
+  observation count.
+* `weights` vectors of integer type are now coerced to double instead of
+  raising an error.
+* Improved numerical robustness of the weighted covariance update when
+  removing the last point from a cluster.
+* Error messages for internal clustering failures now include the underlying
+  cause instead of a generic message.
+
 ---
 
 # CEC v0.11.3

@@ -10,7 +10,7 @@
 namespace cec {
     class cec_exception : public std::exception {
     public:
-        const string &info() {
+        const string &info() const {
             return info_msg;
         }
 

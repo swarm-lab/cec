@@ -289,6 +289,7 @@ cec <- function(x,
             stop("Illegal argument: 'weights' must be non-negative.")
         if (sum(weights) == 0)
             stop("Illegal argument: 'weights' must have positive sum.")
+        weights <- as.double(weights)
     }
 
     if (!all(stats::complete.cases(centers)))

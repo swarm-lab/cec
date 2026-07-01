@@ -16,6 +16,18 @@ using namespace cec;
 using namespace cec::r;
 using std::exception;
 
+// cec_exception::what() returns a generic category string (e.g. "clustering
+// failed"); the actual cause lives in info(). Combine them so R users see the
+// real reason instead of the generic category alone.
+static std::string describe_exception(const exception &ex) {
+    if (auto *ce = dynamic_cast<const cec_exception *>(&ex)) {
+        const std::string &detail = ce->info();
+        if (!detail.empty())
+            return std::string(ex.what()) + ": " + detail;
+    }
+    return ex.what();
+}
+
 static void seed_from_r() {
     GetRNGstate();
     double r = unif_rand();
@@ -62,7 +74,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
         start_results.reset(results.release());
 
     } catch (const exception &ex) {
-        ex_message = ex.what();
+        ex_message = describe_exception(ex);
     }
 
     if (!ex_message.empty())
@@ -74,7 +86,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
         UNPROTECT(1);
         return r_res;
     } catch (const std::exception &ex) {
-        ex_message = ex.what();
+        ex_message = describe_exception(ex);
     }
     Rf_error("%s", ex_message.c_str());
 }
@@ -124,7 +136,7 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
         start_results.reset(results.release());
 
     } catch (const exception &ex) {
-        ex_message = ex.what();
+        ex_message = describe_exception(ex);
     }
 
     if (!ex_message.empty())
@@ -136,7 +148,7 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
         UNPROTECT(1);
         return r_res;
     } catch (const std::exception &ex) {
-        ex_message = ex.what();
+        ex_message = describe_exception(ex);
     }
     Rf_error("%s", ex_message.c_str());
 }
@@ -161,7 +173,7 @@ SEXP cec_init_centers_r(SEXP x_r, SEXP k_r, SEXP method_r) {
                 throw invalid_init_method("invalid init method");
         }
     } catch (const exception &ex) {
-        ex_message = ex.what();
+        ex_message = describe_exception(ex);
     }
 
     if (!ex_message.empty())
@@ -171,7 +183,7 @@ SEXP cec_init_centers_r(SEXP x_r, SEXP k_r, SEXP method_r) {
         SEXP r_res = put(*res);
         return r_res;
     } catch (const exception &ex) {
-        ex_message = ex.what();
+        ex_message = describe_exception(ex);
     }
     Rf_error("%s", ex_message.c_str());
 }
