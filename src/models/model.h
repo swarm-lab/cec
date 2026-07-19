@@ -16,6 +16,8 @@ namespace cec {
 
         inline double energy(const covariance &cov, double total_weight) const noexcept {
             double p = cov.weight_sum() / total_weight;
+            if (p == 0.0)
+                return 0.0;
             return p * (-m::log(p) + cross_entropy(cov));
         }
     };

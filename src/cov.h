@@ -42,7 +42,8 @@ namespace cec {
 
         void update() {
             row::operator=(acc);
-            (*this) /= W;
+            if (W > 0.0)
+                (*this) /= W;
         }
 
         int card() const {
@@ -99,14 +100,21 @@ namespace cec {
                     for (int k = 0; k < n; k++)
                         acc[j][k] += w * t_vec[j] * t_vec[k];
             }
-            acc /= W;
+            if (W > 0.0)
+                acc /= W;
             return covariance(acc, mn);
         }
 
         void add_point(const row &point, double w) {
             double W = mn.weight_sum();
             double W_n = W + w;
-            cov_change(point, W / W_n, W * w / (W_n * W_n), *this);
+            // W_n ~ 0 means both the cluster's prior weight and this point's
+            // weight are ~0 (e.g. a brand-new cluster receiving a legitimate
+            // zero-weight "excluded" observation first). There is no
+            // meaningful covariance contribution to fold in, so leave the
+            // covariance matrix as-is rather than dividing by ~0.
+            if (W_n > W * 1e-9)
+                cov_change(point, W / W_n, W * w / (W_n * W_n), *this);
             mn.add_point(point, w);
             mn.update();
         }

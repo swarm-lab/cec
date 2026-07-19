@@ -28,12 +28,21 @@ static bool cholesky(const cec::mat &cov, cec::mat &dst) {
     return info == 0;
 }
 
+// A negative result here is impossible for a genuine covariance's diagonal
+// product/trace and can only arise from floating-point rounding on a
+// near-singular matrix. Unlike a small-but-valid non-negative result (which
+// gets floored), it must not be silently laundered into a floored positive
+// value -- that would hide a genuinely degenerate covariance behind an
+// artificially favorable (very negative) log(), letting split-search prefer
+// degenerate clusters. Instead it's left as QNAN so the existing
+// isnan-detection in starter.cpp catches and rejects it, same as an outright
+// Cholesky failure below.
 double cec::diagonal_product(const mat &cov) {
     int n = cov.n;
     double res = 1.0;
     for (int i = 0; i < n; i++)
         res *= cov[i][i];
-    return res;
+    return res < 0 ? m::QNAN : handle_cholesky_nan(res);
 }
 
 double cec::trace(const mat &cov) {
@@ -41,7 +50,7 @@ double cec::trace(const mat &cov) {
     double tr = 0;
     for (int i = 0; i < n; i++)
         tr += cov[i][i];
-    return tr;
+    return tr < 0 ? m::QNAN : handle_cholesky_nan(tr);
 }
 
 void cec::multiply(const mat &a, const mat &b, mat &dst) {
@@ -81,9 +90,11 @@ bool cec::eigenvalues_calculator::eigenvalues(const cec::mat &cov, double *res) 
 
 double cec::determinant_calculator::determinant(const cec::mat &cov) const noexcept {
     if (cov.n == 1)
-        return cov[0][0];
-    if (cov.n == 2)
-        return cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
+        return cov[0][0] < 0 ? m::QNAN : handle_cholesky_nan(cov[0][0]);
+    if (cov.n == 2) {
+        double det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
+        return det < 0 ? m::QNAN : handle_cholesky_nan(det);
+    }
     if (!cholesky(cov, tmp))
         return m::QNAN;
     double prod = diagonal_product(tmp);
