@@ -16,4 +16,5 @@ revdep
 ^\.claude$
 ^\.opencode$
 ^\.vibe$
+^\.Rprofile$
 
