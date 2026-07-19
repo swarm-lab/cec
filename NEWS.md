@@ -27,6 +27,11 @@
   removing the last point from a cluster.
 * Error messages for internal clustering failures now include the underlying
   cause instead of a generic message.
+* Internal: the test suite now runs on `testthat` instead of a custom,
+  package-specific test harness. This is a development-facing change only —
+  `cec()`'s arguments, return values, and behaviour are unaffected.
+  `CEC:::run.cec.tests()` no longer exists; anyone wanting to re-run the test
+  suite should clone the repository and use `devtools::test()`.
 
 ---
 

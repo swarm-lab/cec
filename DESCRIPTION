@@ -23,13 +23,14 @@ URL: https://github.com/swarm-lab/cec,
     https://swarm-lab.github.io/cec/
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Imports:
     graphics,
     methods,
-    stats,
-    utils
+    stats
 NeedsCompilation: yes
 License: GPL-3
-Suggests: 
-    covr
+Suggests:
+    covr,
+    testthat (>= 3.0.0)
 Config/roxygen2/version: 8.0.0
+Config/testthat/edition: 3
