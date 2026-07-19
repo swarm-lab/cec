@@ -12,4 +12,8 @@ cran-comments.md
 ^codecov\.yml$
 revdep
 .vscode
-^CODE-REVIEW-SRC\.md$
+^openspec$
+^\.claude$
+^\.opencode$
+^\.vibe$
+
