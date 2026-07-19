@@ -37,6 +37,9 @@ namespace cec {
     public:
         parallel_starter(int max_threads, int starts)
                 : starts(starts) {
+            if (starts < 1)
+                throw clustering_exception("nstart must be at least 1");
+
             if (max_threads == 0)
                 max_threads = std::thread::hardware_concurrency();
             if (max_threads == 0)

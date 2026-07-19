@@ -37,8 +37,8 @@ namespace cec {
 
         template<>
         inline r_ext_ptr<mat> get(SEXP sexp) {
-            if (!Rf_isMatrix(sexp))
-                throw invalid_parameter_type("matrix");
+            if (!Rf_isMatrix(sexp) || TYPEOF(sexp) != REALSXP)
+                throw invalid_parameter_type("numeric matrix");
             int m = Rf_nrows(sexp);
             int n = Rf_ncols(sexp);
             double *r_ma_data = REAL(sexp);

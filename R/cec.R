@@ -262,8 +262,14 @@ cec <- function(x,
     if (iter.max < 0)
         stop("Illegal argument: iter.max must be non-negative.")
 
+    if (nstart < 1)
+        stop("Illegal argument: nstart must be at least 1.")
+
     if (!is.matrix(x))
         stop("Illegal argument: 'x' must be a matrix.")
+
+    if (!is.double(x))
+        storage.mode(x) <- "double"
 
     if (ncol(x) < 1)
         stop("Illegal argument: 'x' must have at least 1 column.")

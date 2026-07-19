@@ -42,7 +42,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
            SEXP weights_r) {
     seed_from_r();
     std::string ex_message;
-    r_ext_ptr<clustering_results> start_results;
+    unique_ptr<clustering_results> results;
     try {
         auto x = get<r_ext_ptr<mat>>(x_r);
         int n = x->n;
@@ -66,12 +66,10 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
 
         variable_starter var_start(std::move(cl_function), centers_par->var_centers);
 
-        unique_ptr<clustering_results> results = var_start.start(*x, models_par->specs);
+        results = var_start.start(*x, models_par->specs);
 
         if (!results)
             throw clustering_exception("all starts failed");
-
-        start_results.reset(results.release());
 
     } catch (const exception &ex) {
         ex_message = describe_exception(ex);
@@ -82,7 +80,7 @@ SEXP cec_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP models_par
 
     try {
         SEXP r_res;
-        PROTECT(r_res = create_R_result(*start_results));
+        PROTECT(r_res = create_R_result(*results));
         UNPROTECT(1);
         return r_res;
     } catch (const std::exception &ex) {
@@ -96,7 +94,7 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
                  SEXP split_param_r, SEXP weights_r) {
     seed_from_r();
     std::string ex_message;
-    r_ext_ptr<clustering_results> start_results;
+    unique_ptr<clustering_results> results;
     try {
         auto x = get<r_ext_ptr<mat>>(x_r);
         int n = x->n;
@@ -128,12 +126,10 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
 
         variable_starter var_start(cl_function, centers_par->var_centers);
 
-        unique_ptr<clustering_results> results = var_start.start(*x, models_par->specs);
+        results = var_start.start(*x, models_par->specs);
 
         if (!results)
             throw clustering_exception("all starts failed");
-
-        start_results.reset(results.release());
 
     } catch (const exception &ex) {
         ex_message = describe_exception(ex);
@@ -144,7 +140,7 @@ SEXP cec_split_r(SEXP x_r, SEXP centers_param_r, SEXP control_param_r, SEXP mode
 
     try {
         SEXP r_res;
-        PROTECT(r_res = create_R_result(*start_results));
+        PROTECT(r_res = create_R_result(*results));
         UNPROTECT(1);
         return r_res;
     } catch (const std::exception &ex) {
@@ -157,17 +153,17 @@ extern "C"
 SEXP cec_init_centers_r(SEXP x_r, SEXP k_r, SEXP method_r) {
     seed_from_r();
     std::string ex_message;
-    r_ext_ptr<mat> res;
+    unique_ptr<mat> res;
     try {
         auto x = get<r_ext_ptr<mat>>(x_r);
         int k = get<int>(k_r);
         init_method im = parse_init_method(get<const char *>(method_r));
         switch (im) {
             case init_method::KMEANSPP:
-                res.init(kmeanspp_init().init(*x, k));
+                res = make_unique<mat>(kmeanspp_init().init(*x, k));
                 break;
             case init_method::RANDOM:
-                res.init(random_init().init(*x, k));
+                res = make_unique<mat>(random_init().init(*x, k));
                 break;
             default:
                 throw invalid_init_method("invalid init method");
