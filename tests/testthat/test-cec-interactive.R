@@ -5,7 +5,14 @@
 # graphics device to keep test output/artifacts quiet.
 
 set.seed(1)
-x_ok <- matrix(rnorm(40), ncol = 2)
+# Two well-separated blobs (not pure noise): a single nstart = 1 attempt must
+# reliably find both clusters regardless of platform-level floating-point
+# differences (BLAS/LAPACK) in the clustering internals -- an unstructured
+# noise dataset left this test flaky on non-macOS CI runners, occasionally
+# failing with "all starts failed" even though set.seed() fixes the R-level
+# RNG stream identically across platforms.
+x_ok <- rbind(matrix(rnorm(20, mean = 0), ncol = 2),
+              matrix(rnorm(20, mean = 10), ncol = 2))
 
 test_that("cec.interactive.readline.true.runs.to.completion", {
     pdf(nullfile())
