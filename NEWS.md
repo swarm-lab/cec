@@ -32,6 +32,14 @@
   `cec()`'s arguments, return values, and behaviour are unaffected.
   `CEC:::run.cec.tests()` no longer exists; anyone wanting to re-run the test
   suite should clone the repository and use `devtools::test()`.
+* Internal: substantially expanded test coverage, including permanent
+  regression tests for the crash-level, numerical-corruption, and copy-paste
+  bugs fixed earlier in this release cycle, direct validation-branch tests for
+  `cec()`/`init.centers()`/model-parameter checking, and tests for
+  previously-untested public functions (`print.cec()`, `plot.cec()`,
+  `mouseset()`, interactive mode). Development-facing only — no change to
+  `cec()`'s arguments, return values, or behaviour. Two unused internal helpers
+  (`ball()`, and a dead C++ exception class) were removed as part of this work.
 
 ---
 

@@ -57,16 +57,6 @@ namespace cec {
                 : clustering_exception("all clusters have been removed") {}
     };
 
-    class not_implemented : public cec_exception {
-    public:
-        explicit not_implemented(const string &info)
-                : cec_exception(info) {}
-
-        const char *what() const noexcept override {
-            return "not implemented";
-        }
-    };
-
     class invalid_init_method : public cec_exception {
     public:
         explicit invalid_init_method(string info)
