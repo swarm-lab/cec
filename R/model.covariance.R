@@ -6,7 +6,7 @@
 #' @noRd
 model.mean <- function(type, center, param) {
     if (length(which(is.na(center))) > 0) {
-        matrix(NA, 1, ncol(center))
+        rep(NA_real_, length(center))
     } else if (type == resolve.type("mean")) {
         param$mean
     } else {

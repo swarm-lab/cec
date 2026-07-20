@@ -12,3 +12,11 @@ test_that("model.covariance.na.branch.returns.na.matrix", {
     expect_true(all(is.na(result)))
     expect_equal(dim(result), c(2, 2))
 })
+
+test_that("model.mean.na.branch.returns.na.vector", {
+    na_center <- c(NA_real_, NA_real_)
+    result <- CEC:::model.mean("all", na_center, list())
+    expect_true(all(is.na(result)))
+    expect_null(dim(result))
+    expect_equal(length(result), 2)
+})

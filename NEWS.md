@@ -21,6 +21,13 @@
   than dimensions could pass the weight-sum-based `card.min` check and produce
   a singular covariance. Cluster removal now also enforces a minimum
   observation count.
+* Fixed a crash in `cec(..., keep.removed = TRUE)` whenever a cluster was
+  actually removed during clustering (`Error in matrix(NA, 1, ncol(center)) :
+  non-numeric matrix extent`).
+* `plot.cec()` now warns and skips a single cluster's covariance ellipse if it
+  cannot be drawn (e.g. a degenerate covariance), instead of failing the whole
+  plot. Previously the surrounding `tryCatch` had no `error` handler and so
+  provided no protection.
 * `weights` vectors of integer type are now coerced to double instead of
   raising an error.
 * Improved numerical robustness of the weighted covariance update when

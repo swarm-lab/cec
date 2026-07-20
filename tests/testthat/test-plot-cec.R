@@ -102,3 +102,21 @@ test_that("plot.cec.skips.removed.clusters.when.drawing.ellipses", {
     plot(Zna, ellipses = TRUE)
     expect_equal(length(calls), nrow(Zna$means.model) - 1)
 })
+
+test_that("plot.cec.warns.and.skips.a.single.failing.ellipse.instead.of.erroring", {
+    calls <- list()
+    local_mocked_bindings(
+        ellipse = function(mean, cov, npoints = 250) {
+            calls[[length(calls) + 1]] <<- TRUE
+            if (length(calls) == 1) stop("simulated ellipse failure")
+            matrix(0, npoints, 2)
+        },
+        .package = "CEC"
+    )
+    pdf(nullfile())
+    on.exit(dev.off(), add = TRUE)
+
+    n_expected <- sum(!is.na(Z$means.model[, 1]))
+    expect_warning(plot(Z, ellipses = TRUE), "simulated ellipse failure")
+    expect_equal(length(calls), n_expected)
+})

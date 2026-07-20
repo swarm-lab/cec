@@ -101,7 +101,13 @@ plot.cec <- function(x, col, cex = 0.5, pch = 19, cex.centers = 1,
                     pts <- ellipse(means[i, ], cov)
                     graphics::lines(pts, lwd = ellipses.lwd, lty = ellipses.lty)
                 },
-                finally = {})
+                error = function(e) {
+                    warning(sprintf(
+                        "Could not draw the covariance ellipse for cluster %d: %s",
+                        i, conditionMessage(e)
+                    ))
+                    NULL
+                })
             }
     }  
 }
