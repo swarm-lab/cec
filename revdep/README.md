@@ -1,24 +1,24 @@
 # Platform
 
-|field    |value                            |
-|:--------|:--------------------------------|
-|version  |R version 4.5.2 (2025-10-31)     |
-|os       |macOS Tahoe 26.2                 |
-|system   |aarch64, darwin20                |
-|ui       |Positron                         |
-|language |(EN)                             |
-|collate  |en_US.UTF-8                      |
-|ctype    |en_US.UTF-8                      |
-|tz       |America/New_York                 |
-|date     |2026-02-03                       |
-|pandoc   |3.8.3 @ /opt/homebrew/bin/pandoc |
-|quarto   |NA                               |
+|field    |value                           |
+|:--------|:-------------------------------|
+|version  |R version 4.6.1 (2026-06-24)    |
+|os       |macOS Tahoe 26.6.2              |
+|system   |aarch64, darwin23               |
+|ui       |X11                             |
+|language |(EN)                            |
+|collate  |en_US.UTF-8                     |
+|ctype    |en_US.UTF-8                     |
+|tz       |America/New_York                |
+|date     |2026-08-30                      |
+|pandoc   |3.11 @ /opt/homebrew/bin/pandoc |
+|quarto   |1.10.18 @ /usr/local/bin/quarto |
 
 # Dependencies
 
-|package |old |new    |Δ  |
-|:-------|:---|:------|:--|
-|CEC     |NA  |0.11.3 |*  |
+|package |old    |new    |Δ  |
+|:-------|:------|:------|:--|
+|CEC     |0.11.3 |0.12.0 |*  |
 
 # Revdeps
 
