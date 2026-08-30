@@ -4,10 +4,10 @@
 
 [`CEC`](https://github.com/swarm-lab/cec) is an
 [`R`](https://cran.r-project.org) package that performs data points
-clustering using the cross–entropy clustering (CEC) method[¹](#fn1).
-This method has been developed based on information theory and combines
-the speed and simplicity of k-means with the ability to use various
-Gaussian mixture models and automatically remove unnecessary clusters.
+clustering using the cross–entropy clustering (CEC) method[^1]. This
+method has been developed based on information theory and combines the
+speed and simplicity of k-means with the ability to use various Gaussian
+mixture models and automatically remove unnecessary clusters.
 
 ------------------------------------------------------------------------
 
@@ -17,6 +17,7 @@ Gaussian mixture models and automatically remove unnecessary clusters.
 [CRAN](https://cran.r-project.org/) as follows:
 
 ``` r
+
 install.packages("CEC")
 ```
 
@@ -25,6 +26,7 @@ install the development version of
 [`CEC`](https://github.com/swarm-lab/cec) as follows:
 
 ``` r
+
 remotes::install_github("swarm-lab/cec")
 ```
 
@@ -40,6 +42,7 @@ identify two clusters in the waiting times between eruptions for the Old
 Faithful geyser in Yellowstone National Park, Wyoming, USA:
 
 ``` r
+
 library("CEC")
 data("faithful")
 clusters <- cec(as.matrix(faithful[, 2, drop = FALSE]), 2)
@@ -61,12 +64,13 @@ available.
 You can now plot the results of the clustering process as follows:
 
 ``` r
+
 hist(faithful$waiting, prob = TRUE, main = "Time between Old Faithful eruptions", 
      xlab = "Minutes", col = "lightgray", border = 0, ylim = c(0, 0.05))
 
 for (i in c(1:2)) {
-    curve(cec$probability[i] * dnorm(x, mean = cec$centers[i], 
-                                     sd = sqrt(cec$covariances.model[[i]][1])),
+    curve(clusters$probability[i] * dnorm(x, mean = clusters$centers[i], 
+                                     sd = sqrt(clusters$covariances.model[[i]][1])),
           add = T, col = i + 1, lwd = 2)  
 }
 ```
@@ -88,6 +92,7 @@ different cluster centers. This can easily be achieved using the
 `nstart` parameter. For instance,
 
 ``` r
+
 clusters <- cec(as.matrix(faithful[, 2, drop = FALSE]), 2, method = "kmeans++", 
     nstart = 10, threads = 4)
 clusters
@@ -137,6 +142,7 @@ CEC will have a tendency to divide the data into clusters in the shape
 of ellipses (ellipsoids in higher dimensions). For instance:
 
 ``` r
+
 data("fourGaussians")
 cec <- cec(fourGaussians, centers = 10, type = "all", nstart = 20)
 plot(cec, asp = 1)
@@ -153,6 +159,7 @@ densities, which will result in splitting the data into disk-like
 clusters of arbitrary sizes (spheres in higher dimensions).
 
 ``` r
+
 data("Tset")
 cec <- cec(x = Tset, centers = 10, type = "spherical", nstart = 5)
 plot(cec, asp = 1)
@@ -169,6 +176,7 @@ into clusters resembling disks, but with their radius determined by the
 `param` argument.
 
 ``` r
+
 data("Tset")
 cec <- cec(x = Tset, centers = 10, type = "fixedr", param = 0.01, nstart = 20)
 plot(cec, asp = 1)
@@ -184,6 +192,7 @@ In this case, the data will be described by ellipses for which the main
 semi-major axes are parallel to the axes of the coordinate system.
 
 ``` r
+
 data("Tset")
 cec <- cec(x = Tset, centers = 10, type = "diagonal", nstart = 5)
 plot(cec, asp = 1)
@@ -199,6 +208,7 @@ This model clusters the data using Gaussians with a fixed covariance.
 The covariance matrix is passed to the `param` argument.
 
 ``` r
+
 data("Tset")
 cec <- cec(x = Tset, centers = 10, card.min = '10%', type = "covariance",  
     param = matrix(c(0.04,  0, 
@@ -216,6 +226,7 @@ This is similar to the previous example, but here the Gaussians have
 fixed eigenvalues. The eigenvalues are passed to the `param` argument.
 
 ``` r
+
 data("Tset")
 cec <- cec(x = Tset, centers = 10, type = "eigenvalues", param = c(0.01, 0.001), 
     nstart = 5)
@@ -233,6 +244,7 @@ values. The mean values of the data dimensions are passed to the `param`
 argument.
 
 ``` r
+
 data("Tset")
 cec <- cec(Tset, 4, "mean", param = c(0.48, 0.48), nstart = 5)
 plot(cec, asp = 1)
@@ -241,6 +253,7 @@ plot(cec, asp = 1)
 ![](reference/figures/mean1.png)
 
 ``` r
+
 data("threeGaussians")
 cec <- cec(threeGaussians,4, "mean", param = c(0, 0), nstart = 10)
 plot(cec)
@@ -258,6 +271,7 @@ mixed models can be specified by giving a list of cluster types (and a
 list of corresponding parameters, if needed).
 
 ``` r
+
 data("mixShapes")
 cec <- cec(mixShapes, 7, iter.max = 3, 
     type = c("fixedr", "fixedr", "eigen", "eigen",  "eigen", "eigen", "eigen"),  
@@ -282,6 +296,7 @@ To enable the splitting method, the `split` argument must be set to
 `TRUE` in the `cec` function. For instance:
 
 ``` r
+
 data("fourGaussians")
 par(mfrow = c(1,2))
 
@@ -305,6 +320,7 @@ Note that the splitting method will be used implicitly when the
 `centers` argument is not provided.
 
 ``` r
+
 data("mixShapes")
 cec <- cec(mixShapes)
 plot(cec, asp = 1)
@@ -322,6 +338,7 @@ For instance, we can generate a data set of 20 Gaussians with the
 following code:
 
 ``` r
+
 twenty.gaussians <- matrix(NA, 0, 2)
 for (i in 0:19) {
     G <- matrix(rnorm(400), 200, 2)
@@ -336,6 +353,7 @@ initial centers, the algorithm finds easily the 20 Gaussian clusters,
 and we only need to provide it with a low `card.min` value.
 
 ``` r
+
 cec <- cec(twenty.gaussians, card.min="1%")
 plot(cec, asp = 1)
 ```
@@ -346,6 +364,7 @@ However, using spherical densities (`type = 'spherical'`) on the same
 data set will lead to sub-optimal results:
 
 ``` r
+
 cec <- cec(twenty.gaussians, type = "spherical", card.min="1%")
 plot(cec, asp = 1)
 ```
@@ -356,6 +375,7 @@ We can help the algorithm identify a more satisfying solution by playing
 with the `split.depth` and `split.tries` parameters, for instance.
 
 ``` r
+
 cec <- cec(twenty.gaussians, type = "spherical", card.min="1%", 
     split.depth = 25, split.tries = 15)
 plot(cec, asp = 1)
@@ -363,9 +383,7 @@ plot(cec, asp = 1)
 
 ![](reference/figures/split_20_gaussians_spherical_good.png)
 
-------------------------------------------------------------------------
-
-1.  Tabor, J., & Spurek, P. (2014). Cross-entropy clustering. Pattern
+[^1]: Tabor, J., & Spurek, P. (2014). Cross-entropy clustering. Pattern
     Recognition, 47(9), 3046–3059.
     <https://doi.org/10.1016/j.patcog.2014.03.006>
 

@@ -23,7 +23,8 @@ cec(
   split.tries = 5,
   split.limit = 100,
   split.initial.starts = 1,
-  readline = TRUE
+  readline = TRUE,
+  weights = NULL
 )
 ```
 
@@ -93,10 +94,14 @@ cec(
 
 - card.min:
 
-  The minimal cluster cardinality. If the number of observations in a
-  cluster becomes lower than card.min, the cluster is removed. This
-  argument can be either an integer number or a string ending with a
-  percent sign (e.g. "5%").
+  The minimal cluster cardinality threshold. Without `weights` (or with
+  uniform weights), a cluster is removed when its observation count
+  drops below this value. With non-uniform `weights`, the threshold
+  applies to the sum of weights in the cluster rather than the count of
+  observations. This argument can be either a number or a string ending
+  with a percent sign (e.g. `"5%"`); in the percent form the threshold
+  is `card.min % * W_total`, where `W_total` is the total weight sum (or
+  total number of observations when weights are uniform).
 
 - keep.removed:
 
@@ -159,11 +164,24 @@ cec(
   \<Return\> instead of the standard 'before plotting' waiting
   (`graphics::par(ask = TRUE)`).
 
+- weights:
+
+  An optional numeric vector of non-negative observation weights, one
+  per row of `x`. When `NULL` (default), all observations are weighted
+  equally and the function behaves identically to the unweighted case.
+  When provided, cluster means, covariances, the minimum-cardinality
+  threshold (`card.min`), and the returned `$probability` field are all
+  weight-aware.
+
 ## Value
 
 An object of class `cec` with the following attributes: `data`,
 `cluster`, `probability`, `centers`, `cost.function`, `nclusters`,
 `iterations`, `cost`, `covariances`, `covariances.model`, `time`.
+
+When `weights` is provided, `$probability` reports the weighted mixing
+proportion \\W_k / W\_{\mathrm{total}}\\ for each cluster, where \\W_k\\
+is the sum of weights in cluster \\k\\.
 
 ## Details
 
@@ -269,22 +287,23 @@ Z
 #> CEC clustering result: 
 #> 
 #> Probability vector:
-#> [1] 0.3400000 0.3176667 0.3423333
+#> [1] 0.3456667 0.3256667 0.1773333 0.1513333
 #> 
 #> Means of clusters:
-#>             [,1]         [,2]
-#> [1,] -0.02245741 -0.004858236
-#> [2,]  3.12679992  3.098052176
-#> [3,]  3.08094336 -1.968972040
+#>             [,1]        [,2]
+#> [1,] 0.005605921 -0.02672867
+#> [2,] 3.126938377  3.02713855
+#> [3,] 3.109052538 -2.72778831
+#> [4,] 3.094463311 -1.21564838
 #> 
 #> Cost function:
-#> [1] 4.088558
+#> [1] 4.13378
 #> 
 #> Number of clusters:
-#> [1] 3
+#> [1] 4
 #> 
 #> Number of iterations:
-#> [1] 40
+#> [1] 11
 #> 
 #> Computation time:
 #> NULL
@@ -309,22 +328,22 @@ Z
 #> CEC clustering result: 
 #> 
 #> Probability vector:
-#> [1] 0.1785714 0.1917143 0.6297143
+#> [1] 0.1895714 0.6301429 0.1802857
 #> 
 #> Means of clusters:
-#>             [,1]       [,2]
-#> [1,] -1.82202429  1.8198672
-#> [2,]  1.79376569  1.8358197
-#> [3,]  0.01245875 -0.1000735
+#>             [,1]        [,2]
+#> [1,]  1.82085128  1.82214164
+#> [2,]  0.02730097 -0.09891503
+#> [3,] -1.82789453  1.80901821
 #> 
 #> Cost function:
-#> [1] 3.239522
+#> [1] 3.245898
 #> 
 #> Number of clusters:
 #> [1] 3
 #> 
 #> Number of iterations:
-#> [1] 8
+#> [1] 21
 #> 
 #> Computation time:
 #> NULL
@@ -349,14 +368,14 @@ Z
 #> CEC clustering result: 
 #> 
 #> Probability vector:
-#> [1] 0.13556086 0.09355609 0.13937947 0.31789976 0.31360382
+#> [1] 0.09355609 0.13937947 0.31789976 0.13556086 0.31360382
 #> 
 #> Means of clusters:
 #>           [,1]       [,2]
-#> [1,] 0.2042192 0.95055618
-#> [2,] 0.4785275 0.02452337
-#> [3,] 0.7643719 0.95023375
-#> [4,] 0.4802873 0.30611503
+#> [1,] 0.4785275 0.02452337
+#> [2,] 0.7643719 0.95023375
+#> [3,] 0.4802873 0.30611503
+#> [4,] 0.2042192 0.95055618
 #> [5,] 0.4802300 0.77350819
 #> 
 #> Cost function:
@@ -366,7 +385,7 @@ Z
 #> [1] 5
 #> 
 #> Number of iterations:
-#> [1] 8
+#> [1] 10
 #> 
 #> Computation time:
 #> NULL
@@ -390,17 +409,17 @@ Z
 #> CEC clustering result: 
 #> 
 #> Probability vector:
-#> [1] 0.1427778 0.1435556 0.1450000 0.1401111 0.1404444 0.1427778 0.1453333
+#> [1] 0.1453333 0.1450000 0.1401111 0.1435556 0.1427778 0.1404444 0.1427778
 #> 
 #> Means of clusters:
 #>           [,1]      [,2]
-#> [1,] 368.08445 203.08078
-#> [2,] 485.59620 168.18558
-#> [3,] 160.00748 310.04231
-#> [4,] 205.68965 399.95641
-#> [5,] 470.67809  30.09067
-#> [6,] 200.07333 100.05577
-#> [7,]  79.96403 263.55175
+#> [1,]  79.96403 263.55175
+#> [2,] 160.00748 310.04231
+#> [3,] 205.68965 399.95641
+#> [4,] 485.59620 168.18558
+#> [5,] 368.08445 203.08078
+#> [6,] 470.67809  30.09067
+#> [7,] 200.07333 100.05577
 #> 
 #> Cost function:
 #> [1] 10.14958
@@ -409,7 +428,7 @@ Z
 #> [1] 7
 #> 
 #> Number of iterations:
-#> [1] 3
+#> [1] 2
 #> 
 #> Computation time:
 #> NULL
