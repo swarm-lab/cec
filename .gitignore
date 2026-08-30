@@ -10,7 +10,8 @@ src/models/*.so
 src/models/*.dll
 docs
 ^revdep$
+.agents
 .claude
-.opencode
-.vibe
+.omp
 openspec
+.DS_Store

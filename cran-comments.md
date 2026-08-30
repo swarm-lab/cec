@@ -28,7 +28,11 @@ comparing R CMD check results across CRAN and dev versions of this package.
 
 ## CRAN team comments
 
-A previous check returned:
+This is a resubmission fixing the WARNING reported for the previous version
+on `r-release-macos-x86_64` (ambiguous reversed comparison operator,
+`-Wambiguous-reversed-operator`, in `src/vec.h`).
+
+A previous check also returned:
 
 * Possibly misspelled words in DESCRIPTION:
   Spurek (19:35)

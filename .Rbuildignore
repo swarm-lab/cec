@@ -14,7 +14,9 @@ revdep
 .vscode
 ^openspec$
 ^\.claude$
-^\.opencode$
-^\.vibe$
+^\.agents$
+^\.omp$
 ^\.Rprofile$
+^\.git$
+^\.gitignore$
 
