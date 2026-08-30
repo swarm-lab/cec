@@ -1,17 +1,18 @@
 ## Test environments
 
-* local OS X 26.2, R 4.5.2, ARM
-* local OS X 26.2, R-devel, ARM
+* local macOS Tahoe 26.6.2, R 4.6.1, ARM
+* local macOS Tahoe 26.6.2, R-devel (4.7.0), ARM
 * Github Actions "windows-latest (release)"
 * Github Actions "macOS-latest (release)"
 * Github Actions "ubuntu-latest (oldrel-1)"
 * Github Actions "ubuntu-latest (release)"
 * Github Actions "ubuntu-latest (devel)"
 * r-hub linux (R-devel)
-* r-hub m1-san (R-devel)
-* r-hub macos-arm64 (R-devel)
+* r-hub macos (R-devel)
 * r-hub windows (R-devel)
-* win-builder.r-project.org
+* win-builder.r-project.org (R-release)
+* win-builder.r-project.org (R-devel)
+* win-builder.r-project.org (R-oldrelease)
 
 ## R CMD check results
 
