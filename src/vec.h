@@ -232,11 +232,11 @@ namespace cec {
                 r++;
             }
 
-            bool operator==(const rows_iterator &ri) {
+            bool operator==(const rows_iterator &ri) const {
                 return r == ri.r;
             }
 
-            bool operator!=(const rows_iterator &ri) {
+            bool operator!=(const rows_iterator &ri) const {
                 return !operator==(ri);
             }
 

@@ -22,7 +22,8 @@ cec(
   split.tries = 5,
   split.limit = 100,
   split.initial.starts = 1,
-  readline = TRUE
+  readline = TRUE,
+  weights = NULL
 )
 }
 \arguments{
@@ -74,10 +75,15 @@ parameter), "eigenvalues" (vector parameter). This can be a vector or a list
 \item{centers.init}{The method used to automatically initialize the centers.
 Possible values are: "kmeans++" (default) and "random".}
 
-\item{card.min}{The minimal cluster cardinality. If the number of
-observations in a cluster becomes lower than card.min, the cluster is
-removed. This argument can be either an integer number or a string ending
-with a percent sign (e.g. "5\%").}
+\item{card.min}{The minimal cluster cardinality threshold. Without
+\code{weights} (or with uniform weights), a cluster is removed when its
+observation count drops below this value. With non-uniform \code{weights},
+the threshold applies to the sum of weights in the cluster rather than the
+count of observations. This argument can be either a number or a string
+ending with a percent sign (e.g. \code{"5\%"}); in the percent form the
+threshold is \code{card.min \% * W_total}, where \code{W_total} is the
+total weight sum (or total number of observations when weights are
+uniform).}
 
 \item{keep.removed}{If this parameter is TRUE, the removed clusters will be
 visible in the results as NA in the "centers" matrix (as well as the
@@ -122,12 +128,23 @@ starting the splitting process.}
 TRUE, at each iteration, before plotting it will wait for the user to press
 <Return> instead of the standard 'before plotting' waiting
 (\code{graphics::par(ask = TRUE)}).}
+
+\item{weights}{An optional numeric vector of non-negative observation weights,
+one per row of \code{x}. When \code{NULL} (default), all observations are
+weighted equally and the function behaves identically to the unweighted case.
+When provided, cluster means, covariances, the minimum-cardinality threshold
+(\code{card.min}), and the returned \code{$probability} field are all
+weight-aware.}
 }
 \value{
 An object of class \code{cec} with the following attributes:
  \code{data}, \code{cluster}, \code{probability}, \code{centers},
  \code{cost.function}, \code{nclusters}, \code{iterations}, \code{cost},
  \code{covariances}, \code{covariances.model}, \code{time}.
+
+ When \code{weights} is provided, \code{$probability} reports the weighted
+ mixing proportion \eqn{W_k / W_{\mathrm{total}}} for each cluster, where
+ \eqn{W_k} is the sum of weights in cluster \eqn{k}.
 }
 \description{
 \code{cec} performs Cross-Entropy Clustering on a data matrix. 

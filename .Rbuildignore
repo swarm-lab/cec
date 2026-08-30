@@ -12,3 +12,11 @@ cran-comments.md
 ^codecov\.yml$
 revdep
 .vscode
+^openspec$
+^\.claude$
+^\.agents$
+^\.omp$
+^\.Rprofile$
+^\.git$
+^\.gitignore$
+

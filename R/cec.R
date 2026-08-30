@@ -7,7 +7,14 @@
 #'
 #' @param x A numeric matrix of data. Each row corresponds to a distinct
 #'  observation; each column corresponds to a distinct variable/dimension. It
-#'  must not contain \code{NA} values. 
+#'  must not contain \code{NA} values.
+#'
+#' @param weights An optional numeric vector of non-negative observation weights,
+#'  one per row of \code{x}. When \code{NULL} (default), all observations are
+#'  weighted equally and the function behaves identically to the unweighted case.
+#'  When provided, cluster means, covariances, the minimum-cardinality threshold
+#'  (\code{card.min}), and the returned \code{$probability} field are all
+#'  weight-aware.
 #'
 #' @param centers Either a matrix of initial centers or the number of initial
 #'  centers (\code{k}, single number \code{cec(data, 4, ...)}) or a vector for
@@ -53,10 +60,15 @@
 #'  parameter), "eigenvalues" (vector parameter). This can be a vector or a list
 #'  (when one of the parameters is a matrix or a vector).
 #'
-#' @param card.min The minimal cluster cardinality. If the number of
-#'  observations in a cluster becomes lower than card.min, the cluster is
-#'  removed. This argument can be either an integer number or a string ending
-#'  with a percent sign (e.g. "5\%").
+#' @param card.min The minimal cluster cardinality threshold. Without
+#'  \code{weights} (or with uniform weights), a cluster is removed when its
+#'  observation count drops below this value. With non-uniform \code{weights},
+#'  the threshold applies to the sum of weights in the cluster rather than the
+#'  count of observations. This argument can be either a number or a string
+#'  ending with a percent sign (e.g. \code{"5\%"}); in the percent form the
+#'  threshold is \code{card.min \% * W_total}, where \code{W_total} is the
+#'  total weight sum (or total number of observations when weights are
+#'  uniform).
 #'
 #' @param keep.removed If this parameter is TRUE, the removed clusters will be
 #'  visible in the results as NA in the "centers" matrix (as well as the
@@ -157,6 +169,10 @@
 #'  \code{cost.function}, \code{nclusters}, \code{iterations}, \code{cost},
 #'  \code{covariances}, \code{covariances.model}, \code{time}.
 #'
+#'  When \code{weights} is provided, \code{$probability} reports the weighted
+#'  mixing proportion \eqn{W_k / W_{\mathrm{total}}} for each cluster, where
+#'  \eqn{W_k} is the sum of weights in cluster \eqn{k}.
+#'
 #' @seealso \code{\link{CEC-package}}, \code{\link{plot.cec}}, 
 #'  \code{\link{print.cec}}
 #'
@@ -231,7 +247,8 @@ cec <- function(x,
                 split.tries = 5,
                 split.limit = 100,
                 split.initial.starts = 1,
-                readline = TRUE) {
+                readline = TRUE,
+                weights = NULL) {
 
     ### CHECK ARGUMENTS
     if (!methods::hasArg(x))
@@ -243,10 +260,16 @@ cec <- function(x,
     }
 
     if (iter.max < 0)
-        stop("Illegal argument: iter.max must be greater than 0.")
+        stop("Illegal argument: iter.max must be non-negative.")
+
+    if (nstart < 1)
+        stop("Illegal argument: nstart must be at least 1.")
 
     if (!is.matrix(x))
         stop("Illegal argument: 'x' must be a matrix.")
+
+    if (!is.double(x))
+        storage.mode(x) <- "double"
 
     if (ncol(x) < 1)
         stop("Illegal argument: 'x' must have at least 1 column.")
@@ -256,6 +279,24 @@ cec <- function(x,
 
     if (!all(stats::complete.cases(x)))
         stop("Illegal argument: 'x' should not contain NA values.")
+
+    if (is.null(weights)) {
+        weights <- rep(1.0, nrow(x))
+    } else {
+        if (!is.numeric(weights))
+            stop("Illegal argument: 'weights' must be a numeric vector.")
+        if (length(weights) != nrow(x))
+            stop("Illegal argument: 'weights' must have length equal to nrow(x).")
+        if (anyNA(weights))
+            stop("Illegal argument: 'weights' must not contain NA values.")
+        if (!all(is.finite(weights)))
+            stop("Illegal argument: 'weights' must be finite.")
+        if (any(weights < 0))
+            stop("Illegal argument: 'weights' must be non-negative.")
+        if (sum(weights) == 0)
+            stop("Illegal argument: 'weights' must have positive sum.")
+        weights <- as.double(weights)
+    }
 
     if (!all(stats::complete.cases(centers)))
         stop("Illegal argument: 'centers' should not contain NA values.")
@@ -329,20 +370,28 @@ cec <- function(x,
         }
 
         return(cec.interactive(x, centers, type, iter.max, 1, param, centers.init,
-                               card.min, keep.removed, readline))
+                               card.min, keep.removed, readline, weights))
     }
 
     ### NON-INTERACTIVE MODE
     n <- ncol(x)
     m <- nrow(x)
 
+    W_total <- sum(weights)
     if (substr(card.min, nchar(card.min), nchar(card.min)) == "%") {
-        card.min <- as.integer(as.double(substr(card.min, 1, nchar(card.min) - 1)) * m/100)
+        card.min <- as.double(substr(card.min, 1, nchar(card.min) - 1)) * W_total / 100
     } else {
-        card.min <- as.integer(card.min)
+        card.min <- as.double(card.min)
     }
 
-    card.min <- max(card.min, n + 1)
+    enforced.min <- n + 1
+    if (card.min < enforced.min) {
+        warning(sprintf(
+            "'card.min' was raised to %g (must be > n = %d for numerical stability).",
+            enforced.min, n
+        ))
+        card.min <- enforced.min
+    }
     k <- max(var.centers)
     # startTime <- proc.time()
 
@@ -354,7 +403,7 @@ cec <- function(x,
         threads <- 0
     }
 
-    control.r <- list(min.card = as.integer(card.min),
+    control.r <- list(min.card = as.double(card.min),
                       max.iters = as.integer(iter.max),
                       starts = as.integer(nstart),
                       threads = as.integer(threads))
@@ -372,18 +421,17 @@ cec <- function(x,
                         limit = as.integer(split.limit),
                         tries = as.integer(split.tries),
                         initial.starts = as.integer(split.initial.starts))
-        Z <- .Call(cec_split_r, x, centers.r, control.r, models.r, split.r)
+        Z <- .Call(cec_split_r, x, centers.r, control.r, models.r, split.r, weights)
     } else {
-        Z <- .Call(cec_r, x, centers.r, control.r, models.r)
+        Z <- .Call(cec_r, x, centers.r, control.r, models.r, weights)
     }
 
     k.final <- nrow(Z$centers)
     # execution.time <- as.vector((proc.time() - startTime))[3]
     Z$centers[is.nan(Z$centers)] <- NA
-    tab <- tabulate(Z$cluster)
-    probability <- vapply(tab, function(c.card) {
-        c.card/m
-    }, 0)
+    probability <- vapply(seq_len(k.final), function(cl) {
+        sum(weights[Z$cluster == cl]) / W_total
+    }, 0.0)
 
     # TODO: change this temporary hack
     model.one <- models.r[[1]]
@@ -399,9 +447,7 @@ cec <- function(x,
                 }
             }
 
-            Z$cluster <- as.integer(vapply(Z$cluster, function(asgn) {
-                as.integer(cluster.map[asgn])
-            }, 0))
+            Z$cluster <- cluster.map[Z$cluster]
 
             Z$centers <- matrix(Z$centers[-na.rows, ], , n)
             Z$covariances <- Z$covariances[-na.rows]
@@ -419,7 +465,7 @@ cec <- function(x,
         models.r <- rep(list(model.one), covs)
     }
 
-    for (i in 1:covs) {
+    for (i in seq_len(covs)) {
         covariances.model[[i]] <- model.covariance(models.r[[i]]$type, Z$covariances[[i]],
                                                    Z$centers[i, ], models.r[[i]]$params)
         means.model[i, ] <- model.mean(models.r[[i]]$type, Z$centers[i, ], models.r[[i]]$params)
@@ -438,17 +484,18 @@ cec <- function(x,
 #' @description Internal function to run \code{\link{cec}} interactively.
 #'  
 #' @noRd
-cec.interactive <- function(x, 
-                            centers, 
+cec.interactive <- function(x,
+                            centers,
                             type = c("covariance", "fixedr", "spherical",
                                      "diagonal", "eigenvalues", "all"),
-                            iter.max = 40, 
-                            nstart = 1, 
-                            param, 
+                            iter.max = 40,
+                            nstart = 1,
+                            param,
                             centers.init = c("kmeans++", "random"),
-                            card.min = "5%", 
-                            keep.removed = FALSE, 
-                            readline = TRUE) {
+                            card.min = "5%",
+                            keep.removed = FALSE,
+                            readline = TRUE,
+                            weights = NULL) {
     old.ask <- graphics::par()["ask"]
     n <- ncol(x)
     
@@ -470,7 +517,8 @@ cec.interactive <- function(x,
     }
     
     while (TRUE) {
-        Z <- cec(x, centers, type, i, 1, param, centers.init, card.min, keep.removed, FALSE)
+        Z <- cec(x, centers, type, i, 1, param, centers.init, card.min, keep.removed, FALSE,
+                 weights = weights)
         
         if (i > Z$iterations | i >= iter.max) {
             break
@@ -504,7 +552,7 @@ cec.interactive <- function(x,
         i <- i + 1
     }
     
-    plot(Z, ellipses = "TRUE")
+    plot(Z, ellipses = TRUE)
     
     if (readline) {
         ignore <- readline(prompt = "Press <Enter>:")

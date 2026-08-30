@@ -37,8 +37,8 @@ namespace cec {
 
         template<>
         inline r_ext_ptr<mat> get(SEXP sexp) {
-            if (!Rf_isMatrix(sexp))
-                throw invalid_parameter_type("matrix");
+            if (!Rf_isMatrix(sexp) || TYPEOF(sexp) != REALSXP)
+                throw invalid_parameter_type("numeric matrix");
             int m = Rf_nrows(sexp);
             int n = Rf_ncols(sexp);
             double *r_ma_data = REAL(sexp);
@@ -64,6 +64,8 @@ namespace cec {
             return make_r_ext<vector<int>>(INTEGER(sexp), INTEGER(sexp) + LENGTH(sexp));
         }
 
+        // Each put() returns an unprotected SEXP. Caller must PROTECT immediately
+        // before any allocation to prevent GC collecting the returned object.
         inline SEXP put(const mat &ma) {
             int m = ma.m;
             int n = ma.n;

@@ -1,26 +1,3 @@
-#' @title Ball
-#' 
-#' @description Internal function to generate a cluster of points uniformly 
-#'  distributed inside a disc.
-#'  
-#' @noRd
-ball <- function(n = 4000, r = 1, dim = 2) { 
-    M <- matrix(0, n, dim)
-    count <- 0;
-    rr <- r ^ 2
-    while (count < n) {
-        p <- stats::runif(dim, -r, r)
-        
-        if (sum(p ^ 2) <= rr) {
-            count <- count + 1
-            M[count, ] <- p
-        }      
-    }
-    
-    M
-}
-
-
 #' @title Volume of a Ball
 #' 
 #' @description Internal function to compute the volume of a ball in \code{n}

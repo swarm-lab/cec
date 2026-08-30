@@ -10,7 +10,7 @@
 namespace cec {
     class cec_exception : public std::exception {
     public:
-        const string &info() {
+        const string &info() const {
             return info_msg;
         }
 
@@ -55,16 +55,6 @@ namespace cec {
     public:
         all_clusters_removed()
                 : clustering_exception("all clusters have been removed") {}
-    };
-
-    class not_implemented : public cec_exception {
-    public:
-        explicit not_implemented(const string &info)
-                : cec_exception(info) {}
-
-        const char *what() const noexcept override {
-            return "not implemented";
-        }
     };
 
     class invalid_init_method : public cec_exception {

@@ -30,8 +30,7 @@ create.cec.params.for.models <- function(k, n, type.arg, param.arg) {
         types <- rep(types, k)
         
         if (methods::hasArg(param.arg)) {
-            params <- rep(list(unlist(param.arg)), k)
-            params <- params[!params %in% list(NULL, NA)]
+            params <- rep(list(param.arg), k)
         }
     }
 
@@ -72,7 +71,7 @@ create.cec.params.for.models <- function(k, n, type.arg, param.arg) {
             
             cov.inv <- solve(cov)
             models[[i]]$params <- list(cov = cov, cov.inv = cov.inv)
-        } else if (type == resolve.type("fixed")) {
+        } else if (type == resolve.type("fixedr")) {
             idx <- idx + 1
             
             if (length(params) < idx) {
@@ -89,7 +88,7 @@ create.cec.params.for.models <- function(k, n, type.arg, param.arg) {
                 stop("Illegal argument: illegal parameter for 'fixedr' type.")
             }
             
-            if (!r > 0) {
+            if (r <= 0) {
                 stop("Illegal argument: illegal parameter for 'fixedr' type.")
             }
             
@@ -107,7 +106,7 @@ create.cec.params.for.models <- function(k, n, type.arg, param.arg) {
                 stop("Illegal argument: illegal parameter for 'eigenvalues' type: invalid length.")
             }
             
-            if (!all(evals != 0)) {
+            if (!all(evals > 0)) {
                 stop("Illegal argument: illegal parameter for 'eigenvalues' type: all values must be greater than 0.")
             }
             

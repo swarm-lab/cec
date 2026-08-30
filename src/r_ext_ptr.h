@@ -35,6 +35,10 @@ namespace cec {
             r_ext_ptr &operator=(r_ext_ptr &r_p) = delete;
 
             r_ext_ptr &operator=(r_ext_ptr &&r_p) noexcept {
+                if (r_ptr != NULL) {
+                    finalize(r_ptr);
+                    UNPROTECT_PTR(r_ptr);
+                }
                 r_ptr = r_p.r_ptr;
                 r_p.r_ptr = NULL;
                 return *this;

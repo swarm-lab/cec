@@ -45,10 +45,10 @@ namespace cec {
     public:
         int starts;
         int max_iter;
-        int min_card;
+        double min_card;
         int threads;
 
-        control_param(int starts, int max_iter, int min_card, int threads)
+        control_param(int starts, int max_iter, double min_card, int threads)
                 : starts(starts),
                   max_iter(max_iter),
                   min_card(min_card),
@@ -101,7 +101,7 @@ namespace cec {
         const int n;
 
         explicit model_spherical_spec(int n)
-                : model_spec(model_type::ALL),
+                : model_spec(model_type::SPHERICAL),
                   n(n) {}
 
         unique_ptr<model> create_model() const override;
@@ -112,7 +112,7 @@ namespace cec {
         const int n;
 
         explicit model_diagonal_spec(int n)
-                : model_spec(model_type::ALL),
+                : model_spec(model_type::DIAGONAL),
                   n(n) {}
 
         unique_ptr<model> create_model() const override;
@@ -137,7 +137,7 @@ namespace cec {
         const mat g_cov;
 
         explicit model_covariance_spec(int n, mat g_cov)
-                : model_spec(model_type::FIXED_R),
+                : model_spec(model_type::COVARIANCE),
                   n(n),
                   g_cov(std::move(g_cov)) {}
 

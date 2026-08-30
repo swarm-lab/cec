@@ -1,7 +1,8 @@
 #ifndef CEC_COV_H
 #define CEC_COV_H
 
-#include "vec.h" 
+#include "vec.h"
+#include "common.h"
 
 namespace cec {
 
@@ -9,7 +10,7 @@ namespace cec {
     public:
         explicit mean(const mat &sample)
                 : mean(sample.n) {
-            for (auto &&p : sample) add_point(p);
+            for (auto &&p : sample) add_point(p, 1.0);
             update();
         }
 
@@ -25,28 +26,38 @@ namespace cec {
 
         mean &operator=(const mean &m) = default;
 
-        void add_point(const row &point) {
-            acc += point;
+        void add_point(const row &point, double w) {
+            for (int i = 0; i < size; i++)
+                acc[i] += w * point[i];
+            W += w;
             car++;
         }
 
-        void rem_point(const row &point) {
-            acc -= point;
+        void rem_point(const row &point, double w) {
+            for (int i = 0; i < size; i++)
+                acc[i] -= w * point[i];
+            W -= w;
             car--;
         }
 
         void update() {
             row::operator=(acc);
-            (*this) /= car;
+            if (W > 0.0)
+                (*this) /= W;
         }
 
         int card() const {
             return car;
         }
 
+        double weight_sum() const {
+            return W;
+        }
+
     private:
         using row::operator=;
         int car = 0;
+        double W = 0.0;
         vec acc;
     };
 
@@ -66,34 +77,62 @@ namespace cec {
             return mn.card();
         }
 
-        static covariance estimate(const mat &sample) {
-            cec::mean mn(sample);
+        double weight_sum() const {
+            return mn.weight_sum();
+        }
+
+        static covariance estimate(const mat &sample, const vector<double> &weights) {
+            cec::mean mn(sample.n);
+            int idx = 0;
+            for (auto &&p : sample) mn.add_point(p, weights[idx++]);
+            mn.update();
             int n = sample.n;
             mat acc(n, n);
             acc.fill(0);
             vec t_vec(n);
+            double W = mn.weight_sum();
+            idx = 0;
             for (auto &&p : sample) {
                 t_vec = p;
                 t_vec -= mn;
-                acc += mat::outer_product(t_vec);
+                double w = weights[idx++];
+                for (int j = 0; j < n; j++)
+                    for (int k = 0; k < n; k++)
+                        acc[j][k] += w * t_vec[j] * t_vec[k];
             }
-            acc /= sample.m;
+            if (W > 0.0)
+                acc /= W;
             return covariance(acc, mn);
         }
 
-        void add_point(const row &point) {
-            int card = mn.card();
-            double card_n = card + 1;
-            cov_change(point, card / card_n, card / (card_n * card_n), *this);
-            mn.add_point(point);
+        void add_point(const row &point, double w) {
+            double W = mn.weight_sum();
+            double W_n = W + w;
+            // W_n ~ 0 means both the cluster's prior weight and this point's
+            // weight are ~0 (e.g. a brand-new cluster receiving a legitimate
+            // zero-weight "excluded" observation first). There is no
+            // meaningful covariance contribution to fold in, so leave the
+            // covariance matrix as-is rather than dividing by ~0.
+            if (W_n > W * 1e-9)
+                cov_change(point, W / W_n, W * w / (W_n * W_n), *this);
+            mn.add_point(point, w);
             mn.update();
         }
 
-        void rem_point(const row &point) {
-            int card = mn.card();
-            double card_n = card - 1;
-            cov_change(point, card / card_n, -card / (card_n * card_n), *this);
-            mn.rem_point(point);
+        void rem_point(const row &point, double w) {
+            double W = mn.weight_sum();
+            double W_n = W - w;
+            // W is accumulated incrementally across many add_point/rem_point
+            // calls, so a "last point in the cluster" removal can leave a
+            // tiny positive residual instead of an exact zero. A relative
+            // tolerance catches that residual without misclassifying a
+            // genuinely small remaining weight.
+            if (W_n <= W * 1e-9) {
+                fill(m::QNAN);
+                return;
+            }
+            cov_change(point, W / W_n, -W * w / (W_n * W_n), *this);
+            mn.rem_point(point, w);
             mn.update();
         }
 

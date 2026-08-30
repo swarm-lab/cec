@@ -1,3 +1,40 @@
+# CEC v0.12.0
+
+## New features
+
+* `cec()` now accepts an optional `weights` argument: a numeric vector of
+  non-negative values, one per observation. Cluster means, covariances, and
+  the returned `$probability` field are all weight-aware. When `weights = NULL`
+  (default), behaviour is identical to previous versions.
+
+## Breaking changes
+
+* When `weights` is non-uniform, `$probability` now reports the weighted mixing
+  proportion `W_k / W_total` rather than the observation-count fraction
+  `n_k / m`.
+* When `weights` is non-uniform, `card.min` is now interpreted as a minimum
+  weight sum rather than a minimum observation count.
+
+## Minor improvements and fixes
+
+* Fixed a crash with non-uniform `weights`: a cluster with fewer observations
+  than dimensions could pass the weight-sum-based `card.min` check and produce
+  a singular covariance. Cluster removal now also enforces a minimum
+  observation count.
+* Fixed a crash in `cec(..., keep.removed = TRUE)` whenever a cluster was
+  actually removed during clustering (`Error in matrix(NA, 1, ncol(center)) :
+  non-numeric matrix extent`).
+* `plot.cec()` now warns and skips a single cluster's covariance ellipse if it
+  cannot be drawn (e.g. a degenerate covariance), instead of failing the whole
+  plot. Previously the surrounding `tryCatch` had no `error` handler and so
+  provided no protection.
+* Error messages for internal clustering failures now include the underlying
+  cause instead of a generic message.
+* Fixed a C++20 compiler warning (ambiguous reversed comparison operators)
+  flagged by CRAN's macOS checks.
+
+---
+
 # CEC v0.11.3
 
 ## New features

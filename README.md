@@ -72,8 +72,8 @@ hist(faithful$waiting, prob = TRUE, main = "Time between Old Faithful eruptions"
      xlab = "Minutes", col = "lightgray", border = 0, ylim = c(0, 0.05))
 
 for (i in c(1:2)) {
-    curve(cec$probability[i] * dnorm(x, mean = cec$centers[i], 
-                                     sd = sqrt(cec$covariances.model[[i]][1])),
+    curve(clusters$probability[i] * dnorm(x, mean = clusters$centers[i], 
+                                     sd = sqrt(clusters$covariances.model[[i]][1])),
           add = T, col = i + 1, lwd = 2)  
 }
 ```

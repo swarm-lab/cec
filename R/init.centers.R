@@ -37,9 +37,17 @@ init.centers <- function(x, k, method = c("kmeans++", "random")) {
     if (!is.matrix(x)) {
         stop("init.centers: 'x' should be a matrix.")
     }
-    
-    if (k < 0) {
+
+    if (nrow(x) < 1) {
+        stop("init.centers: 'x' should have at least 1 row.")
+    }
+
+    if (k <= 0) {
         stop("init.centers: 'k' should be greater than 0.")
+    }
+
+    if (!is.double(x)) {
+        storage.mode(x) <- "double"
     }
 
     .Call(cec_init_centers_r, x, as.integer(k), method)

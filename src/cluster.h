@@ -11,17 +11,16 @@ namespace cec {
 
         explicit deferred_update_covariance(const covariance &initial)
                 : covariance(initial),
-                  tmp_point(initial.m),
                   tmp_cov(initial) {}
 
-        void add_point_tmp(const row &point) {
+        void add_point_tmp(const row &point, double w) {
             tmp_cov = *this;
-            tmp_cov.add_point(point);
+            tmp_cov.add_point(point, w);
         }
 
-        void rem_point_tmp(const row &point) {
+        void rem_point_tmp(const row &point, double w) {
             tmp_cov = *this;
-            tmp_cov.rem_point(point);
+            tmp_cov.rem_point(point, w);
         }
 
         void apply_change() {
@@ -33,27 +32,26 @@ namespace cec {
         }
 
     private:
-        vec tmp_point;
         covariance tmp_cov;
     };
 
     class cluster {
     public:
-        cluster(const model &mod, const covariance &initial_covariance, const int m)
-                : m(m),
+        cluster(const model &mod, const covariance &initial_covariance, double total_weight)
+                : total_weight(total_weight),
                   mod(mod),
                   cov(initial_covariance),
-                  eng(mod.energy(cov, m)),
+                  eng(mod.energy(cov, total_weight)),
                   tmp_eng(eng) {}
 
-        double add_point(const row &point) {
-            cov.add_point_tmp(point);
+        double add_point(const row &point, double w) {
+            cov.add_point_tmp(point, w);
             tmp_eng = tmp_energy();
             return tmp_eng - eng;
         }
 
-        double rem_point(const row &point) {
-            cov.rem_point_tmp(point);
+        double rem_point(const row &point, double w) {
+            cov.rem_point_tmp(point, w);
             tmp_eng = tmp_energy();
             return tmp_eng - eng;
         }
@@ -66,6 +64,10 @@ namespace cec {
             return cov.card();
         }
 
+        double weight_sum() const {
+            return cov.weight_sum();
+        }
+
         const mat &covariance() const {
             return cov;
         }
@@ -75,16 +77,16 @@ namespace cec {
             eng = tmp_eng;
         }
 
-        double energy() {
-            return mod.energy(cov, m);
+        double energy() const {
+            return mod.energy(cov, total_weight);
         }
 
     private:
         double tmp_energy() {
-            return mod.energy(cov.tmp_covariance(), m);
+            return mod.energy(cov.tmp_covariance(), total_weight);
         }
 
-        const int m;
+        const double total_weight;
         const model &mod;
         deferred_update_covariance cov;
         double eng;
