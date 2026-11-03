@@ -1,6 +1,7 @@
 #ifndef FIXED_COVARIANCE_H
 #define FIXED_COVARIANCE_H
 
+#include <cmath>
 #include "cov_utils.h"
 #include "model.h"
 #include "../exceptions.h"

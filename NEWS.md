@@ -1,3 +1,27 @@
+# CEC v0.12.1
+
+## New features
+
+* N/A.
+
+## Minor improvements and fixes
+
+* Fixed a crash in `cec(..., split = TRUE)` whenever every attempt at the
+  initial (pre-split) clustering failed to produce a valid result (e.g. too
+  few observations for the enforced `card.min` floor, most commonly a subset
+  of 3 or fewer points). The internal split-mode code path dereferenced that
+  failed result unconditionally instead of treating it as another
+  unsuccessful start, segfaulting the R process. It now surfaces as the same
+  catchable `"all starts failed"` error already raised by the non-split path
+  in this situation.
+* Added missing standard library includes that newer C++ standard libraries
+  (flagged as "clang23" on CRAN) no longer provide indirectly: `<cmath>` in
+  the `src/models/*.h` headers, `<functional>` in `variable_starter.h`,
+  `<iterator>` in `vec.h`, `<limits>` in `init.cpp`, and `<utility>` in
+  `r_ext_ptr.h` and `common.h`.
+
+---
+
 # CEC v0.12.0
 
 ## New features

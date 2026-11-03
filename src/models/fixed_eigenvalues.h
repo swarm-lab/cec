@@ -1,6 +1,7 @@
 #ifndef FIXED_EIGENVALUES_H
 #define FIXED_EIGENVALUES_H
 
+#include <cmath>
 #include "cov_utils.h"
 #include "model.h"
 

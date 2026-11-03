@@ -1,6 +1,7 @@
 #ifndef SPHERICAL_H
 #define SPHERICAL_H
 
+#include <cmath>
 #include "cov_utils.h"
 #include "model.h"
 

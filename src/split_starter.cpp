@@ -29,6 +29,9 @@ namespace cec {
     split_starter::start(const unique_ptr<clustering_results> &cl_res,
                          const clustering_input &input_params) {
 
+        if (!cl_res)
+            return unique_ptr<clustering_results>();
+
         if (cl_res->cluster_number >= max_k)
             return make_unique<clustering_results>(*cl_res);
 

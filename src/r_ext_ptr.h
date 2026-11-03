@@ -1,6 +1,8 @@
 #ifndef R_EXT_PTR_H
 #define R_EXT_PTR_H
 
+#include <utility>
+
 #include <Rinternals.h>
 #include <Rdefines.h>
 
