@@ -118,8 +118,9 @@ namespace cec {
             for (int i = 0; i < starts; i++) {
                 try {
                     unique_ptr<clustering_results> res = c_starter->start(unique_m_input.get());
-                    for (auto &&cp : c_procs)
-                        res = cp->start(res, unique_m_input.get());
+                    if (res)
+                        for (auto &&cp : c_procs)
+                            res = cp->start(res, unique_m_input.get());
 
                     best(std::move(res));
                 } catch (clustering_exception &ce) {

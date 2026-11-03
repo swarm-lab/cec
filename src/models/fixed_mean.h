@@ -1,6 +1,7 @@
 #ifndef MEAN_H
 #define MEAN_H
 
+#include <cmath>
 #include "cov_utils.h"
 #include "model.h"
 #include "../m.h"

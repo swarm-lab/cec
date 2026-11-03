@@ -28,3 +28,25 @@ test_that("clustering.impossible.for.every.start.surfaces.as.clean.error", {
         "all starts failed"
     )
 })
+
+test_that("split.mode.initial.clustering.failure.surfaces.as.clean.error", {
+    # Regression test: when split = TRUE and every attempt at the initial
+    # (pre-split) clustering fails to produce a valid result (e.g. too few
+    # points for the enforced card.min floor), cec_starter::start legitimately
+    # returns a null clustering_results (all per-start attempts caught their
+    # own clustering_exception internally, so nothing propagates as a throw).
+    # mp_start_subtask::operator() used to hand that null result straight to
+    # split_starter::start(), which dereferenced it unconditionally
+    # (cl_res->cluster_number) and segfaulted the R process. Both call sites
+    # now guard against a null initial result, so this surfaces as the same
+    # clean "all starts failed" error as the non-split path instead of a
+    # crash.
+    set.seed(1)
+    x <- matrix(runif(6), 3, 2)
+
+    expect_error(
+        cec(x, 1, iter.max = 10, card.min = 3, split = TRUE, split.tries = 1,
+            split.limit = 2, split.depth = 1, split.initial.starts = 1),
+        "all starts failed"
+    )
+})

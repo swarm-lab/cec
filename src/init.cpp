@@ -1,3 +1,4 @@
+#include <limits>
 #include "init.h"
 #include "random.h"
 

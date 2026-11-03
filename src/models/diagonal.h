@@ -1,6 +1,7 @@
 #ifndef DIAGONAL_H
 #define DIAGONAL_H
 
+#include <cmath>
 #include "cov_utils.h"
 #include "model.h"
 

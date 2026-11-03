@@ -1,6 +1,7 @@
 #ifndef CEC_VARIABLE_STARTER_H
 #define CEC_VARIABLE_STARTER_H
 
+#include <functional>
 #include "cec_starter.h"
 #include "parallel_starter.h"
 

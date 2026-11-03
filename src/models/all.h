@@ -1,6 +1,7 @@
 #ifndef ALL_H
 #define ALL_H
 
+#include <cmath>
 #include "cov_utils.h"
 #include "model.h"
 #include "../m.h"
