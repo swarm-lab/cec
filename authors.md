@@ -13,7 +13,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/swarm-lab/cec/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/swarm-lab/cec/blob/v0.12.1/DESCRIPTION)
 
 Konrad K (2026). *CEC: Cross-Entropy Clustering*. R package version
 0.12.1, <https://github.com/swarm-lab/cec>.
